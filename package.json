@@ -1,0 +1,23 @@
+{
+  "name": "proj-virtualstocks",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server/index.js",
+  "dependencies": {
+    "superagent": "^5.0.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node server/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PMHStudio/VirtualStocks.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/PMHStudio/VirtualStocks/issues"
+  },
+  "homepage": "https://github.com/PMHStudio/VirtualStocks#readme"
+}
