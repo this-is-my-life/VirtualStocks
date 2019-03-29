@@ -1,5 +1,5 @@
-<!doctype html>
-<html lang="ko-kr">
+﻿<!doctype html>
+<html lang="en">
   <head>
     <title>VirtualStocks API</title>
     <!-- Required meta tags -->
@@ -13,18 +13,25 @@
   </head>
   <body>
       <div class="container">
+        <div id="title" class="title text-center top-margin"></div>
         <div id="mainWindow"></div>
         <nav class="navbar navbar-expand-sm navbar-light bg-primary fixed-bottom row">
-          <button class="btn btn-primary left-margin">차트</button>
-          <button class="btn btn-primary">매수</button>
-          <button class="btn btn-primary">매도</button>
-          <button class="btn btn-primary">은행</button>
-          <button class="btn btn-primary right-margin">도박</button>
+          <button class="btn btn-primary left-margin" id="chart" onclick="getchart()">차트</button>
+          <button class="btn btn-primary" id="buy" onclick="getBuy()">매수</button>
+          <button class="btn btn-primary" id="sell">매도</button>
+          <button class="btn btn-primary" id="bank">은행</button>
+          <button class="btn btn-primary right-margin" id="casino">도박</button>
         </nav>
       </div>
 
 
       <style>
+        @import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css);
+
+        .title {
+          font-family: 'Noto Sans KR', sans-serif;
+        }
+
         .left-margin {
           margin-left: 5px;
         }
@@ -32,17 +39,27 @@
         .right-margin {
           margin-right: 5px;
         }
+
+        .top-margin {
+          margin-top: 5px;
+        }
       </style>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-
+      
       <script>
+        let temp
         getchart()
         function getchart () {
-          document.getElementById('mainWindow').innerHTML = "<table class=\"table\"><thead><tr><th scope=\"col\">#</th><th scope=\"col\">종목명</th><th scope=\"col\">전날 대비</th><th scope=\"col\">현재가격</th><th scope=\"col\">남은 주</th></tr></thead><tbody>"
+          document.getElementById("chart").classList.replace("btn-primary", "btn-dark")
+          document.getElementById("buy").classList.replace("btn-dark", "btn-primary")
+          document.getElementById("sell").classList.replace("btn-dark", "btn-primary")
+          document.getElementById("bank").classList.replace("btn-dark", "btn-primary")
+          document.getElementById("casino").classList.replace("btn-dark", "btn-primary")
+          temp = "<table class=\"table top-margin\"><thead><th scope=\"col\">종목명</th><th scope=\"col\">전날 대비</th><th scope=\"col\">현재가격</th><th scope=\"col\">남은 주</th></tr></thead><tbody>"
           // get JSON with using pure javascript
           var xhr= new XMLHttpRequest()
           var target= "https://api.jsonbin.io/b/5c9cd7b9da12e364adfb7737/latest"
@@ -52,19 +69,43 @@
           xhr.onreadystatechange = function() {
             if (xhr.readyState=== XMLHttpRequest.DONE){
               if (xhr.status== 200){
-                let loadedJSON= JSON.parse(xhr.responseText)
-                for (let counter = 0; counter < loadedJSON.length; counter++) {
-                  document.getElementById('mainWindow').innerHTML += "<tr><th scope=\"row\">" + counter + "</th><td>" + loadedJSON[counter].name + "</td>"
-                  document.getElementById('mainWindow').innerHTML += "<td>" + loadedJSON[counter].name + "</td>"
-                  document.getElementById('mainWindow').innerHTML += "<td>" + loadedJSON[counter].name + "</td>"
-                  document.getElementById('mainWindow').innerHTML += "<td>" + loadedJSON[counter].name + "</td></tr>"
+                let info = JSON.parse(xhr.responseText).info
+                let chart = JSON.parse(xhr.responseText).chart
+                for (let counter = 0; counter < chart.length; counter++) {
+                  temp += "<tr><td scope=\"row\">" + chart[counter].name + "</td>"
+                  if (chart[counter].after < chart[counter].before) {
+                    temp += "<td style=\"color: red;\"> ▼ " + (chart[counter].before - chart[counter].after) + "</td>"
+                  }
+                  if (chart[counter].after > chart[counter].before) {
+                    temp += "<td style=\"color: green;\"> ▲ " + (chart[counter].after - chart[counter].before) + "</td>"
+                  }
+                  if (chart[counter].after === chart[counter].before) {
+                    temp += "<td> - " + 0 + "</td>"
+                  }
+                  temp += "<td>" + chart[counter].after + "</td>"
+                  temp += "<td>" + chart[counter].count + "주</td></tr>"
                 }
+                let last = new Date(info.lastUpdate)
+                let next = new Date(info.nextUpdate)
+                let now = new Date()
+              temp += "</tbody></table><hr />이전 가격 변동: " + last.getHours() + " : " + last.getMinutes() + "<br/>다음 가격 변동: " + next.getHours() + " : " + next.getMinutes() + " (" + Math.round((next.getTime() - now.getTime()) / 1000) + "초후) <button class=\"btn btn-warning\" onclick=\"getchart()\"></button>"
+                document.getElementById('mainWindow').innerHTML = temp
+                document.getElementById("title").innerHTML = "<h2>" + (now.getMonth() + 1) + "/" + now.getDate() + " 주식시장</h2>"
               } else {
                 alert("fail to load");
               }
             }
           }
-          document.getElementById('mainWindow').innerHTML += "</tbody></table>"
+        }
+
+        function getBuy () {
+          document.getElementById("chart").classList.replace("btn-dark", "btn-primary")
+          document.getElementById("buy").classList.replace("btn-primary", "btn-dark")
+          document.getElementById("sell").classList.replace("btn-dark", "btn-primary")
+          document.getElementById("bank").classList.replace("btn-dark", "btn-primary")
+          document.getElementById("casino").classList.replace("btn-dark", "btn-primary")
+          temp = "개발중"
+          document.getElementById('mainWindow').innerHTML = temp
         }
       </script>
   </body>
