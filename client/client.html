@@ -19,7 +19,7 @@
           <button class="btn btn-primary left-margin" id="chart" onclick="getchart()">차트</button>
           <button class="btn btn-primary" id="buy" onclick="getBuy()">매수</button>
           <button class="btn btn-primary" id="sell" onclick="getSell()">매도</button>
-          <button class="btn btn-primary" id="bank">은행</button>
+          <button class="btn btn-primary" id="bank" onclick="getBank()">은행</button>
           <button class="btn btn-primary right-margin" id="casino">도박</button>
         </nav>
       </div>
@@ -154,6 +154,17 @@
               }
             }
           }
+        }
+
+        function getBank () {
+          document.getElementById("chart").classList.replace("btn-dark", "btn-primary")
+          document.getElementById("buy").classList.replace("btn-dark", "btn-primary")
+          document.getElementById("sell").classList.replace("btn-dark", "btn-primary")
+          document.getElementById("bank").classList.replace("btn-primary", "btn-dark")
+          document.getElementById("casino").classList.replace("btn-dark", "btn-primary")
+          temp = "<div class=\"form-group\"><label for=\"selName\">조회할 이름</label><input type=\"text\" class=\"form-control\" id=\"bankName\" placeholder=\"ex) 박민혁\"></div><button class=\"btn-primary btn fixed\"onclick=\"bank()\">잔고, 가진 주 조회</button><hr />"
+          document.getElementById('mainWindow').innerHTML = temp
+          document.getElementById("title").innerHTML = "<h2>은행</h2>"
         }
 
         function buyReset () {
@@ -292,16 +303,31 @@
           }
         }
 
-        function put(path, params) {
+        function bank () {
+          var xhr= new XMLHttpRequest()
+          var target= "https://api.jsonbin.io/b/5c9ebada1c56bb1ec391d410/latest"
+          xhr.open("GET", target)
+          xhr.send()
+
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState=== XMLHttpRequest.DONE){
+              if (xhr.status== 200){
+                temp += "가진돈: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[0] + "<hr />HC주식회사: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[1] + "주<br />뮤트테크: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[2] + "주<br />TK전자: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[3] + "주<br />PC가전: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[4] + "주<br />피엠산업: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[5] + "주<br />비빔밥사: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[6] + "주"
+                document.getElementById('mainWindow').innerHTML = temp
+              } else {
+                alert("fail to load");
+              }
+            }
+          }
+        }
+
+        function put (path, params) {
           let xhrp = Array
           xhrp[path] = new XMLHttpRequest()
           xhrp[path].open("PUT", path)
           xhrp[path].setRequestHeader('Content-Type', 'application/json')
           xhrp[path].send(JSON.stringify(params))
-          xhrp[path].onreadystatechange = function() {
-            console.log(xhrp[path].responseText)
-          }
-      }
+        }
       </script>
   </body>
 </html>
