@@ -13,8 +13,8 @@
   </head>
   <body>
       <div class="container">
-          <div class="alert alert-primary" role="alert">
-            "매수"탭에서 주를 1개 이상 사면 계정이 생성됩니다 (초기돈은 100)
+          <div class="alert alert-warning" role="alert">
+            공지: 이 버전은 아직 개발중이므로 작동하지않는 기능이나 오류, 밸런스 붕괴가 있을 수 있습니다
           </div>
         <div id="title" class="title text-center top-margin"></div>
         <div id="mainWindow"></div>
@@ -109,7 +109,7 @@
           document.getElementById("sell").classList.replace("btn-dark", "btn-primary")
           document.getElementById("bank").classList.replace("btn-dark", "btn-primary")
           document.getElementById("casino").classList.replace("btn-dark", "btn-primary")
-          temp = "<div class=\"form-group\"><label for=\"buyName\">매수자</label><input type=\"text\" class=\"form-control\" id=\"buyName\" placeholder=\"ex) 박민혁\"></div><div class=\"form-group\"><label for=\"buyPasswd\">매수자 비밀번호</label><input type=\"password\" class=\"form-control\" id=\"buyPasswd\" placeholder=\"****\"></div><div class=\"form-group\">\n<label for=\"buySelect\">매수할 종목명</label>\n<select class=\"form-control\" id=\"buySelect\">"
+          temp = "<div class=\"form-group\"><label for=\"buyName\">매수자</label><input type=\"text\" class=\"form-control\" id=\"buyName\" placeholder=\"ex) 박민혁\"></div><div class=\"form-group\"><label for=\"buyPasswd\">매수자 비밀번호</label><input type=\"password\" class=\"form-control\" id=\"buyPasswd\" placeholder=\"비밀번호를 정한적이 없을경우 새로 만듭니다\"></div><div class=\"form-group\">\n<label for=\"buySelect\">매수할 종목명</label>\n<select class=\"form-control\" id=\"buySelect\">"
           var xhr= new XMLHttpRequest()
           var target= "https://api.jsonbin.io/b/5c9cd7b9da12e364adfb7737/latest"
           xhr.open("GET", target)
@@ -122,7 +122,7 @@
                 for (let counter = 0; counter < chart.length; counter++) {
                   temp += "<option value=\"" + counter + "\">" + chart[counter].name + "</option>"
                 }
-                temp += "</select>\n</div><div class=\"form-group\"><label for=\"buyCount\">매수할 주식수</label><input type=\"number\" class=\"form-control\" id=\"buyCount\" placeholder=\"ex) 4\"></div><button class=\"btn-danger btn right-margin\"onclick=\"buyReset()\">초기화</button></div><button class=\"btn-primary btn left-margin\"onclick=\"buy()\">매수 진행</button>"
+                temp += "</select>\n</div><div class=\"form-group\"><label for=\"buyCount\">매수할 주식 수</label><input type=\"number\" class=\"form-control\" id=\"buyCount\" placeholder=\"ex) 4\"></div><button class=\"btn-danger btn right-margin\"onclick=\"buyReset()\">초기화</button></div><button class=\"btn-primary btn left-margin\"onclick=\"buy()\">매수 진행</button>"
                 document.getElementById('mainWindow').innerHTML = temp
                 document.getElementById("title").innerHTML = "<h2>주 매수</h2>"
               } else {
@@ -138,7 +138,7 @@
           document.getElementById("sell").classList.replace("btn-primary", "btn-dark")
           document.getElementById("bank").classList.replace("btn-dark", "btn-primary")
           document.getElementById("casino").classList.replace("btn-dark", "btn-primary")
-          temp = "<div class=\"form-group\"><label for=\"selName\">매도자</label><input type=\"text\" class=\"form-control\" id=\"selName\" placeholder=\"ex) 박민혁\"></div><div class=\"form-group\"><label for=\"selPasswd\">매도자 비밀번호</label><input type=\"password\" class=\"form-control\" id=\"selPasswd\" placeholder=\"****\"></div><div class=\"form-group\">\n<label for=\"selSelect\">매도할 종목명</label>\n<select class=\"form-control\" id=\"selSelect\">"
+          temp = "<div class=\"form-group\"><label for=\"selName\">매도자</label><input type=\"text\" class=\"form-control\" id=\"selName\" placeholder=\"ex) 박민혁\"></div><div class=\"form-group\"><label for=\"selPasswd\">매도자 비밀번호</label><input type=\"password\" class=\"form-control\" id=\"selPasswd\" placeholder=\"비밀번호를 정한적이 없을경우 새로 만듭니다\"></div><div class=\"form-group\">\n<label for=\"selSelect\">매도할 종목명</label>\n<select class=\"form-control\" id=\"selSelect\">"
           var xhr= new XMLHttpRequest()
           var target= "https://api.jsonbin.io/b/5c9cd7b9da12e364adfb7737/latest"
           xhr.open("GET", target)
@@ -151,7 +151,7 @@
                 for (let counter = 0; counter < chart.length; counter++) {
                   temp += "<option value=\"" + counter + "\">" + chart[counter].name + "</option>"
                 }
-                temp += "</select>\n</div><div class=\"form-group\"><label for=\"selCount\">매도할 주식수</label><input type=\"number\" class=\"form-control\" id=\"selCount\" placeholder=\"ex) 4\"></div><button class=\"btn-danger btn right-margin\"onclick=\"selReset()\">초기화</button></div><button class=\"btn-primary btn left-margin\"onclick=\"sel()\">매도 진행</button>"
+                temp += "</select>\n</div><div class=\"form-group\"><label for=\"selCount\">매도할 주식 수</label><input type=\"number\" class=\"form-control\" id=\"selCount\" placeholder=\"ex) 4\"></div><button class=\"btn-danger btn right-margin\"onclick=\"selReset()\">초기화</button></div><button class=\"btn-primary btn left-margin\"onclick=\"sel()\">매도 진행</button>"
                 document.getElementById('mainWindow').innerHTML = temp
                 document.getElementById("title").innerHTML = "<h2>주 매도</h2>"
               } else {
@@ -317,7 +317,11 @@
           xhr.onreadystatechange = function() {
             if (xhr.readyState=== XMLHttpRequest.DONE){
               if (xhr.status== 200){
-                temp += "가진돈: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[0] + "<hr />HC주식회사: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[1] + "주<br />뮤트테크: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[2] + "주<br />TK전자: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[3] + "주<br />PC가전: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[4] + "주<br />피엠산업: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[5] + "주<br />비빔밥사: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[6] + "주"
+                if (!JSON.parse(xhr.responseText)[document.getElementById("bankName").value]) {
+                  temp += "가진돈: 100<hr />HC주식회사: 0주<br />뮤트테크: 0주<br />TK전자: 0주<br />PC가전: 0주<br />피엠산업: 0주<br />비빔밥사: 0주"
+                } else {
+                  temp += "가진돈: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[0] + "<hr />HC주식회사: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[1] + "주<br />뮤트테크: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[2] + "주<br />TK전자: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[3] + "주<br />PC가전: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[4] + "주<br />피엠산업: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[5] + "주<br />비빔밥사: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[6] + "주"
+                }
                 document.getElementById('mainWindow').innerHTML = temp
               } else {
                 alert("fail to load");
