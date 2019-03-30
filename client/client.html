@@ -18,7 +18,7 @@
         <nav class="navbar navbar-expand-sm navbar-light bg-primary fixed-bottom row">
           <button class="btn btn-primary left-margin" id="chart" onclick="getchart()">차트</button>
           <button class="btn btn-primary" id="buy" onclick="getBuy()">매수</button>
-          <button class="btn btn-primary" id="sell">매도</button>
+          <button class="btn btn-primary" id="sell" onclick="getSell()">매도</button>
           <button class="btn btn-primary" id="bank">은행</button>
           <button class="btn btn-primary right-margin" id="casino">도박</button>
         </nav>
@@ -127,11 +127,47 @@
           }
         }
 
+        function getSell () {
+          document.getElementById("chart").classList.replace("btn-dark", "btn-primary")
+          document.getElementById("buy").classList.replace("btn-dark", "btn-primary")
+          document.getElementById("sell").classList.replace("btn-primary", "btn-dark")
+          document.getElementById("bank").classList.replace("btn-dark", "btn-primary")
+          document.getElementById("casino").classList.replace("btn-dark", "btn-primary")
+          temp = "<div class=\"form-group\"><label for=\"selName\">매도자</label><input type=\"text\" class=\"form-control\" id=\"selName\" placeholder=\"ex) 박민혁\"></div><div class=\"form-group\"><label for=\"selPasswd\">매도자 비밀번호</label><input type=\"password\" class=\"form-control\" id=\"selPasswd\" placeholder=\"****\"></div><div class=\"form-group\">\n<label for=\"selSelect\">매도할 종목명</label>\n<select class=\"form-control\" id=\"selSelect\">"
+          var xhr= new XMLHttpRequest()
+          var target= "https://api.jsonbin.io/b/5c9cd7b9da12e364adfb7737/latest"
+          xhr.open("GET", target)
+          xhr.send()
+
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState=== XMLHttpRequest.DONE){
+              if (xhr.status== 200){
+                let chart = JSON.parse(xhr.responseText).chart
+                for (let counter = 0; counter < chart.length; counter++) {
+                  temp += "<option value=\"" + counter + "\">" + chart[counter].name + "</option>"
+                }
+                temp += "</select>\n</div><div class=\"form-group\"><label for=\"selCount\">매도할 주식수</label><input type=\"number\" class=\"form-control\" id=\"selCount\" placeholder=\"ex) 4\"></div><button class=\"btn-danger btn right-margin\"onclick=\"selReset()\">초기화</button></div><button class=\"btn-primary btn left-margin\"onclick=\"sel()\">매도 진행</button>"
+                document.getElementById('mainWindow').innerHTML = temp
+                document.getElementById("title").innerHTML = "<h2>주 매도</h2>"
+              } else {
+                alert("fail to load");
+              }
+            }
+          }
+        }
+
         function buyReset () {
           document.getElementById("buyName").value = ""
           document.getElementById("buyPasswd").value = ""
           document.getElementById("buySelect").value = 0
           document.getElementById("buyCount").value = ""
+        }
+
+        function selReset () {
+          document.getElementById("selName").value = ""
+          document.getElementById("selPasswd").value = ""
+          document.getElementById("selSelect").value = 0
+          document.getElementById("selCount").value = ""
         }
 
         function buy () {
@@ -143,7 +179,7 @@
           xhr.onreadystatechange = function() {
             if (xhr.readyState=== XMLHttpRequest.DONE){
               if (xhr.status== 200){
-                let chart = JSON.parse(xhr.responseText).chart
+                let chart = JSON.parse(xhr.responseText)
                 var xhr2= new XMLHttpRequest()
                 var target2= "https://api.jsonbin.io/b/5c9ebada1c56bb1ec391d410/latest"
                 xhr2.open("GET", target2)
@@ -166,20 +202,19 @@
                         if (have[document.getElementById("buyName").value].password === document.getElementById("buyPasswd").value) {
                           document.getElementById("buyPasswd").style.backgroundColor = "lightgreen"
                           document.getElementById("buySelect").style.backgroundColor = "lightgreen"
-                          if (!document.getElementById("buyCount").value || document.getElementById("buyCount").value <= 0 || document.getElementById("buyCount").value > chart[document.getElementById("buySelect").value].count) {
+                          if (!document.getElementById("buyCount").value || document.getElementById("buyCount").value <= 0 || document.getElementById("buyCount").value > chart.chart[document.getElementById("buySelect").value].count) {
                             document.getElementById("buyCount").style.backgroundColor = "lightpink"
                           } else {
                             document.getElementById("buyCount").style.backgroundColor = "lightgreen"
-                            if (have[document.getElementById("buyName").value].have < document.getElementById("buyCount").value * chart[document.getElementById("buySelect").value].after) {
+                            if (have[document.getElementById("buyName").value].have[0] < document.getElementById("buyCount").value * chart.chart[document.getElementById("buySelect").value].after) {
                               document.getElementById("buyCount").style.backgroundColor = "lightpink"
                             } else {
-                              chart[parseInt(document.getElementById("buySelect").value)].count -= parseInt(document.getElementById("buyCount").value)
+                              chart.chart[parseInt(document.getElementById("buySelect").value)].count -= parseInt(document.getElementById("buyCount").value)
                               have[document.getElementById("buyName").value].have[parseInt(document.getElementById("buySelect").value) + 1] += parseInt(document.getElementById("buyCount").value)
-                              have[document.getElementById("buyName").value].have[0] -= (document.getElementById("buyCount").value * chart[document.getElementById("buySelect").value].after)
-                              console.log(chart)
-                              console.log(have)
+                              have[document.getElementById("buyName").value].have[0] -= (document.getElementById("buyCount").value * chart.chart[document.getElementById("buySelect").value].after)
                               put("https://api.jsonbin.io/b/5c9ebada1c56bb1ec391d410", have)
                               put("https://api.jsonbin.io/b/5c9cd7b9da12e364adfb7737", chart)
+                              getchart()
                             }
                           }
                         } else {
@@ -198,28 +233,74 @@
           }
         }
 
-        function put(path, params, method) {
-          method = method || "put"; // Set method to post by default if not specified.
+        function sel () {
+          var xhr= new XMLHttpRequest()
+          var target= "https://api.jsonbin.io/b/5c9cd7b9da12e364adfb7737/latest"
+          xhr.open("GET", target)
+          xhr.send()
 
-          // The rest of this code assumes you are not using a library.
-          // It can be made less wordy if you use one.
-          var form = document.createElement("form");
-          form.setAttribute("method", method);
-          form.setAttribute("action", path);
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState=== XMLHttpRequest.DONE){
+              if (xhr.status== 200){
+                let chart = JSON.parse(xhr.responseText)
+                var xhr2= new XMLHttpRequest()
+                var target2= "https://api.jsonbin.io/b/5c9ebada1c56bb1ec391d410/latest"
+                xhr2.open("GET", target2)
+                xhr2.send()
 
-          for(var key in params) {
-              if(params.hasOwnProperty(key)) {
-                  var hiddenField = document.createElement("input");
-                  hiddenField.setAttribute("type", "hidden");
-                  hiddenField.setAttribute("name", key);
-                  hiddenField.setAttribute("value", params[key]);
-
-                  form.appendChild(hiddenField);
+                xhr2.onreadystatechange = function() {
+                  if (xhr2.readyState=== XMLHttpRequest.DONE){
+                    if (xhr2.status== 200){
+                      let have = JSON.parse(xhr2.responseText)
+                      if (!document.getElementById("selName").value) {
+                          document.getElementById("selName").style.backgroundColor = "lightpink"
+                      } else {
+                          document.getElementById("selName").style.backgroundColor = "lightgreen"
+                        if (!have[document.getElementById("selName").value]) {
+                          have[document.getElementById("selName").value] = {
+                            password: document.getElementById("selPasswd").value,
+                            have: [100, 0, 0, 0, 0, 0, 0]
+                          }
+                        }
+                        if (have[document.getElementById("selName").value].password === document.getElementById("selPasswd").value) {
+                          document.getElementById("selPasswd").style.backgroundColor = "lightgreen"
+                          document.getElementById("selSelect").style.backgroundColor = "lightgreen"
+                          if (!document.getElementById("selCount").value || document.getElementById("selCount").value <= 0 || document.getElementById("selCount").value > have[document.getElementById("selName").value].have[parseInt(document.getElementById("selSelect").value) + 1]) {
+                            document.getElementById("selCount").style.backgroundColor = "lightpink"
+                          } else {
+                            document.getElementById("selCount").style.backgroundColor = "lightgreen"
+                            chart.chart[parseInt(document.getElementById("selSelect").value)].count += parseInt(document.getElementById("selCount").value)
+                            have[document.getElementById("selName").value].have[parseInt(document.getElementById("selSelect").value) + 1] -= parseInt(document.getElementById("selCount").value)
+                            have[document.getElementById("selName").value].have[0] += (document.getElementById("selCount").value * chart.chart[document.getElementById("selSelect").value].after)
+                            put("https://api.jsonbin.io/b/5c9ebada1c56bb1ec391d410", have)
+                            put("https://api.jsonbin.io/b/5c9cd7b9da12e364adfb7737", chart)
+                            getchart()
+                          }
+                        } else {
+                          document.getElementById("selPasswd").style.backgroundColor = "lightpink"
+                        }
+                      }
+                    } else {
+                      alert("fail to load");
+                    }
+                  }
+                }
+              } else {
+                alert("fail to load");
               }
+            }
           }
+        }
 
-          document.body.appendChild(form);
-          form.submit();
+        function put(path, params) {
+          let xhrp = Array
+          xhrp[path] = new XMLHttpRequest()
+          xhrp[path].open("PUT", path)
+          xhrp[path].setRequestHeader('Content-Type', 'application/json')
+          xhrp[path].send(JSON.stringify(params))
+          xhrp[path].onreadystatechange = function() {
+            console.log(xhrp[path].responseText)
+          }
       }
       </script>
   </body>
