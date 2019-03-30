@@ -160,7 +160,7 @@
                         if (!have[document.getElementById("buyName").value]) {
                           have[document.getElementById("buyName").value] = {
                             password: document.getElementById("buyPasswd").value,
-                            have: [30, 0, 0, 0, 0, 0, 0]
+                            have: [100, 0, 0, 0, 0, 0, 0]
                           }
                         }
                         if (have[document.getElementById("buyName").value].password === document.getElementById("buyPasswd").value) {
@@ -170,13 +170,22 @@
                             document.getElementById("buyCount").style.backgroundColor = "lightpink"
                           } else {
                             document.getElementById("buyCount").style.backgroundColor = "lightgreen"
-                            
+                            if (have[document.getElementById("buyName").value].have < document.getElementById("buyCount").value * chart[document.getElementById("buySelect").value].after) {
+                              document.getElementById("buyCount").style.backgroundColor = "lightpink"
+                            } else {
+                              chart[parseInt(document.getElementById("buySelect").value)].count -= parseInt(document.getElementById("buyCount").value)
+                              have[document.getElementById("buyName").value].have[parseInt(document.getElementById("buySelect").value) + 1] += parseInt(document.getElementById("buyCount").value)
+                              have[document.getElementById("buyName").value].have[0] -= (document.getElementById("buyCount").value * chart[document.getElementById("buySelect").value].after)
+                              console.log(chart)
+                              console.log(have)
+                              put("https://api.jsonbin.io/b/5c9ebada1c56bb1ec391d410", have)
+                              put("https://api.jsonbin.io/b/5c9cd7b9da12e364adfb7737", chart)
+                            }
                           }
                         } else {
                           document.getElementById("buyPasswd").style.backgroundColor = "lightpink"
                         }
                       }
-                      console.log(have)
                     } else {
                       alert("fail to load");
                     }
