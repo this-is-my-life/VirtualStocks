@@ -104,8 +104,31 @@
           document.getElementById("sell").classList.replace("btn-dark", "btn-primary")
           document.getElementById("bank").classList.replace("btn-dark", "btn-primary")
           document.getElementById("casino").classList.replace("btn-dark", "btn-primary")
-          temp = "개발중"
-          document.getElementById('mainWindow').innerHTML = temp
+          temp = "<div class=\"form-group\"><label for=\"buyName\">매수자</label><input type=\"text\" class=\"form-control\" id=\"buyName\" placeholder=\"ex) 박민혁\"></div><div class=\"form-group\"><label for=\"buyPasswd\">매수자 비밀번호</label><input type=\"password\" class=\"form-control\" id=\"buyPasswd\" placeholder=\"****\"></div><div class=\"form-group\">\n<label for=\"buySelect\">매수할 종목명</label>\n<select class=\"form-control\" id=\"buySelect\">"
+          var xhr= new XMLHttpRequest()
+          var target= "https://api.jsonbin.io/b/5c9cd7b9da12e364adfb7737/latest"
+          xhr.open("GET", target)
+          xhr.send()
+
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState=== XMLHttpRequest.DONE){
+              if (xhr.status== 200){
+                let chart = JSON.parse(xhr.responseText).chart
+                for (let counter = 0; counter < chart.length; counter++) {
+                  temp += "<option>" + chart[counter].name + "</option>"
+                }
+                temp += "</select>\n</div><div class=\"form-group\"><label for=\"buyCount\">매수할 주식수</label><input type=\"number\" class=\"form-control\" id=\"buyCount\" placeholder=\"ex) 4\"></div><button class=\"btn-danger btn right-margin\"onclick=\"buyReset()\">초기화</button></div><button class=\"btn-primary btn left-margin\"onclick=\"buyCheck()\">매수 진행</button>"
+                document.getElementById('mainWindow').innerHTML = temp
+                document.getElementById("title").innerHTML = "<h2>주 매수</h2>"
+              } else {
+                alert("fail to load");
+              }
+            }
+          }
+        }
+
+        function buyreset () {
+          
         }
       </script>
   </body>
