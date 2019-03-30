@@ -32,7 +32,7 @@
         @import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css);
 
         #mainWindow {
-          margin-bottom: 15%
+          margin-bottom: 20%
         }
         
         .title {
@@ -63,12 +63,14 @@
         getchart()
 
         function getchart () {
+          document.getElementById("chart").disabled = true
+          if (document.getElementById("refresh")) { document.getElementById("refresh").disabled = true }
           document.getElementById("chart").classList.replace("btn-primary", "btn-dark")
           document.getElementById("buy").classList.replace("btn-dark", "btn-primary")
           document.getElementById("sell").classList.replace("btn-dark", "btn-primary")
           document.getElementById("bank").classList.replace("btn-dark", "btn-primary")
           document.getElementById("casino").classList.replace("btn-dark", "btn-primary")
-          temp = "<table class=\"table top-margin\"><thead><th scope=\"col\">종목명</th><th scope=\"col\">전날 대비</th><th scope=\"col\">현재가격</th><th scope=\"col\">남은 주</th></tr></thead><tbody>"
+          temp = "<table class=\"table top-margin\"><thead><th scope=\"col\">종목명</th><th scope=\"col\">전가격 대비</th><th scope=\"col\">현재가격</th><th scope=\"col\">남은 주</th></tr></thead><tbody>"
           // get JSON with using pure javascript
           var xhr= new XMLHttpRequest()
           var target= "https://api.jsonbin.io/b/5c9cd7b9da12e364adfb7737/latest"
@@ -97,17 +99,20 @@
                 let last = new Date(info.lastUpdate)
                 let next = new Date(info.nextUpdate)
                 let now = new Date()
-              temp += "</tbody></table><hr />이전 가격 변동: " + last.getHours() + " : " + last.getMinutes() + "<br/>다음 가격 변동: " + next.getHours() + " : " + next.getMinutes() + " (" + Math.round((next.getTime() - now.getTime()) / 1000) + "초후) <button class=\"btn btn-warning\" onclick=\"getchart()\"></button>"
-                document.getElementById('mainWindow').innerHTML = temp
-                document.getElementById("title").innerHTML = "<h2>" + (now.getMonth() + 1) + "/" + now.getDate() + " 주식시장</h2>"
+              temp += "</tbody></table><hr />이전 가격 변동: " + last.getHours() + " : " + last.getMinutes() + "<br/>다음 가격 변동: " + next.getHours() + " : " + next.getMinutes() + " (" + Math.round((next.getTime() - now.getTime()) / 1000) + "초후) <button class=\"btn btn-warning\" id=\"refresh\"onclick=\"getchart()\"></button>"
+              document.getElementById('mainWindow').innerHTML = temp
+              document.getElementById("title").innerHTML = "<h2>" + (now.getMonth() + 1) + "/" + now.getDate() + " 주식시장</h2>"
+              document.getElementById("chart").disabled = false
               } else {
-                alert("fail to load");
+                alert("요청을 처리하지 못했습니다: 인터넷 연결상태를 확인해보세요");
+                document.getElementById("chart").disabled = false
               }
             }
           }
         }
 
         function getBuy () {
+          document.getElementById("buy").disabled = true
           document.getElementById("chart").classList.replace("btn-dark", "btn-primary")
           document.getElementById("buy").classList.replace("btn-primary", "btn-dark")
           document.getElementById("sell").classList.replace("btn-dark", "btn-primary")
@@ -126,17 +131,20 @@
                 for (let counter = 0; counter < chart.length; counter++) {
                   temp += "<option value=\"" + counter + "\">" + chart[counter].name + "</option>"
                 }
-                temp += "</select>\n</div><div class=\"form-group\"><label for=\"buyCount\">매수할 주식 수</label><input type=\"number\" class=\"form-control\" id=\"buyCount\" placeholder=\"ex) 4\"></div><button class=\"btn-danger btn right-margin\"onclick=\"buyReset()\">초기화</button></div><button class=\"btn-primary btn left-margin\"onclick=\"buy()\">매수 진행</button>"
+                temp += "</select>\n</div><div class=\"form-group\"><label for=\"buyCount\">매수할 주식 수</label><input type=\"number\" class=\"form-control\" id=\"buyCount\" placeholder=\"ex) 4\"></div><button class=\"btn-danger btn right-margin\"onclick=\"buyReset()\">초기화</button></div><button class=\"btn-primary btn left-margin\" id=\"buybtn\" onclick=\"buy()\">매수 진행</button>"
                 document.getElementById('mainWindow').innerHTML = temp
                 document.getElementById("title").innerHTML = "<h2>주 매수</h2>"
+                document.getElementById("buy").disabled = false
               } else {
-                alert("fail to load");
+                alert("요청을 처리하지 못했습니다: 인터넷 연결상태를 확인해보세요");
+                document.getElementById("buy").disabled = false
               }
             }
           }
         }
 
         function getSell () {
+          document.getElementById("sell").disabled = true
           document.getElementById("chart").classList.replace("btn-dark", "btn-primary")
           document.getElementById("buy").classList.replace("btn-dark", "btn-primary")
           document.getElementById("sell").classList.replace("btn-primary", "btn-dark")
@@ -155,25 +163,29 @@
                 for (let counter = 0; counter < chart.length; counter++) {
                   temp += "<option value=\"" + counter + "\">" + chart[counter].name + "</option>"
                 }
-                temp += "</select>\n</div><div class=\"form-group\"><label for=\"selCount\">매도할 주식 수</label><input type=\"number\" class=\"form-control\" id=\"selCount\" placeholder=\"ex) 4\"></div><button class=\"btn-danger btn right-margin\"onclick=\"selReset()\">초기화</button></div><button class=\"btn-primary btn left-margin\"onclick=\"sel()\">매도 진행</button>"
+                temp += "</select>\n</div><div class=\"form-group\"><label for=\"selCount\">매도할 주식 수</label><input type=\"number\" class=\"form-control\" id=\"selCount\" placeholder=\"ex) 4\"></div><button class=\"btn-danger btn right-margin\"onclick=\"selReset()\">초기화</button></div><button class=\"btn-primary btn left-margin\" id=\"sellbtn\" onclick=\"sel()\">매도 진행</button>"
                 document.getElementById('mainWindow').innerHTML = temp
                 document.getElementById("title").innerHTML = "<h2>주 매도</h2>"
+                document.getElementById("sell").disabled = false
               } else {
-                alert("fail to load");
+                alert("요청을 처리하지 못했습니다: 인터넷 연결상태를 확인해보세요");
+                document.getElementById("sell").disabled = false
               }
             }
           }
         }
 
         function getBank () {
+          document.getElementById("bank").disabled = true
           document.getElementById("chart").classList.replace("btn-dark", "btn-primary")
           document.getElementById("buy").classList.replace("btn-dark", "btn-primary")
           document.getElementById("sell").classList.replace("btn-dark", "btn-primary")
           document.getElementById("bank").classList.replace("btn-primary", "btn-dark")
           document.getElementById("casino").classList.replace("btn-dark", "btn-primary")
-          temp = "<div class=\"form-group\"><label for=\"selName\">조회할 이름</label><input type=\"text\" class=\"form-control\" id=\"bankName\" placeholder=\"ex) 박민혁\"></div><button class=\"btn-primary btn fixed\"onclick=\"bank()\">잔고, 가진 주 조회</button><hr />"
+          temp = "<div class=\"form-group\"><label for=\"selName\">조회할 이름</label><input type=\"text\" class=\"form-control\" id=\"bankName\" placeholder=\"ex) 박민혁\"></div><button class=\"btn-primary btn fixed\" id=\"bankbtn\" onclick=\"bank()\">잔고, 가진 주 조회</button><hr /><div id=\"bankWindow\"></div>"
           document.getElementById('mainWindow').innerHTML = temp
           document.getElementById("title").innerHTML = "<h2>은행</h2>"
+          document.getElementById("bank").disabled = false
         }
 
         function buyReset () {
@@ -191,6 +203,7 @@
         }
 
         function buy () {
+          document.getElementById("buybtn").disabled = true
           var xhr= new XMLHttpRequest()
           var target= "https://api.jsonbin.io/b/5c9cd7b9da12e364adfb7737/latest"
           xhr.open("GET", target)
@@ -211,6 +224,7 @@
                       let have = JSON.parse(xhr2.responseText)
                       if (!document.getElementById("buyName").value) {
                           document.getElementById("buyName").style.backgroundColor = "lightpink"
+                          document.getElementById("buybtn").disabled = false
                       } else {
                           document.getElementById("buyName").style.backgroundColor = "lightgreen"
                         if (!have[document.getElementById("buyName").value]) {
@@ -224,10 +238,12 @@
                           document.getElementById("buySelect").style.backgroundColor = "lightgreen"
                           if (!document.getElementById("buyCount").value || document.getElementById("buyCount").value <= 0 || document.getElementById("buyCount").value > chart.chart[document.getElementById("buySelect").value].count) {
                             document.getElementById("buyCount").style.backgroundColor = "lightpink"
+                          document.getElementById("buybtn").disabled = false
                           } else {
                             document.getElementById("buyCount").style.backgroundColor = "lightgreen"
                             if (have[document.getElementById("buyName").value].have[0] < document.getElementById("buyCount").value * chart.chart[document.getElementById("buySelect").value].after) {
                               document.getElementById("buyCount").style.backgroundColor = "lightpink"
+                          document.getElementById("buybtn").disabled = false
                             } else {
                               chart.chart[parseInt(document.getElementById("buySelect").value)].count -= parseInt(document.getElementById("buyCount").value)
                               have[document.getElementById("buyName").value].have[parseInt(document.getElementById("buySelect").value) + 1] += parseInt(document.getElementById("buyCount").value)
@@ -235,25 +251,30 @@
                               put("https://api.jsonbin.io/b/5c9ebada1c56bb1ec391d410", have)
                               put("https://api.jsonbin.io/b/5c9cd7b9da12e364adfb7737", chart)
                               getchart()
+                              document.getElementById("buybtn").disabled = false
                             }
                           }
                         } else {
                           document.getElementById("buyPasswd").style.backgroundColor = "lightpink"
+                          document.getElementById("buybtn").disabled = false
                         }
                       }
                     } else {
-                      alert("fail to load");
+                      alert("요청을 처리하지 못했습니다: 인터넷 연결상태를 확인해보세요");
+                      document.getElementById("buybtn").disabled = false
                     }
                   }
                 }
               } else {
-                alert("fail to load");
+                alert("요청을 처리하지 못했습니다: 인터넷 연결상태를 확인해보세요");
+                document.getElementById("buybtn").disabled = false
               }
             }
           }
         }
 
         function sel () {
+          document.getElementById("sellbtn").disabled = true
           var xhr= new XMLHttpRequest()
           var target= "https://api.jsonbin.io/b/5c9cd7b9da12e364adfb7737/latest"
           xhr.open("GET", target)
@@ -274,6 +295,7 @@
                       let have = JSON.parse(xhr2.responseText)
                       if (!document.getElementById("selName").value) {
                           document.getElementById("selName").style.backgroundColor = "lightpink"
+                          document.getElementById("sellbtn").disabled = false
                       } else {
                           document.getElementById("selName").style.backgroundColor = "lightgreen"
                         if (!have[document.getElementById("selName").value]) {
@@ -287,6 +309,7 @@
                           document.getElementById("selSelect").style.backgroundColor = "lightgreen"
                           if (!document.getElementById("selCount").value || document.getElementById("selCount").value <= 0 || document.getElementById("selCount").value > have[document.getElementById("selName").value].have[parseInt(document.getElementById("selSelect").value) + 1]) {
                             document.getElementById("selCount").style.backgroundColor = "lightpink"
+                          document.getElementById("sellbtn").disabled = false
                           } else {
                             document.getElementById("selCount").style.backgroundColor = "lightgreen"
                             chart.chart[parseInt(document.getElementById("selSelect").value)].count += parseInt(document.getElementById("selCount").value)
@@ -295,24 +318,29 @@
                             put("https://api.jsonbin.io/b/5c9ebada1c56bb1ec391d410", have)
                             put("https://api.jsonbin.io/b/5c9cd7b9da12e364adfb7737", chart)
                             getchart()
+                            document.getElementById("sellbtn").disabled = false
                           }
                         } else {
                           document.getElementById("selPasswd").style.backgroundColor = "lightpink"
+                          document.getElementById("sellbtn").disabled = false
                         }
                       }
                     } else {
-                      alert("fail to load");
+                      alert("요청을 처리하지 못했습니다: 인터넷 연결상태를 확인해보세요");
+                      document.getElementById("sellbtn").disabled = false
                     }
                   }
                 }
               } else {
-                alert("fail to load");
+                alert("요청을 처리하지 못했습니다: 인터넷 연결상태를 확인해보세요");
+                document.getElementById("sellbtn").disabled = false
               }
             }
           }
         }
 
         function bank () {
+          document.getElementById("bankbtn").disabled = true
           var xhr= new XMLHttpRequest()
           var target= "https://api.jsonbin.io/b/5c9ebada1c56bb1ec391d410/latest"
           xhr.open("GET", target)
@@ -322,13 +350,15 @@
             if (xhr.readyState=== XMLHttpRequest.DONE){
               if (xhr.status== 200){
                 if (!JSON.parse(xhr.responseText)[document.getElementById("bankName").value]) {
-                  temp += "가진돈: 100<hr />HC주식회사: 0주<br />뮤트테크: 0주<br />TK전자: 0주<br />PC가전: 0주<br />피엠산업: 0주<br />비빔밥사: 0주"
+                  temp = "가진돈: 100<hr />HC주식회사: 0주<br />뮤트테크: 0주<br />TK전자: 0주<br />PC가전: 0주<br />피엠산업: 0주<br />비빔밥사: 0주"
                 } else {
-                  temp += "가진돈: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[0] + "<hr />HC주식회사: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[1] + "주<br />뮤트테크: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[2] + "주<br />TK전자: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[3] + "주<br />PC가전: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[4] + "주<br />피엠산업: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[5] + "주<br />비빔밥사: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[6] + "주"
+                  temp = "가진돈: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[0] + "<hr />HC주식회사: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[1] + "주<br />뮤트테크: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[2] + "주<br />TK전자: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[3] + "주<br />PC가전: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[4] + "주<br />피엠산업: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[5] + "주<br />비빔밥사: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[6] + "주"
                 }
-                document.getElementById('mainWindow').innerHTML = temp
+                document.getElementById('bankWindow').innerHTML = temp
+                document.getElementById("bankbtn").disabled = false 
               } else {
-                alert("fail to load");
+                alert("요청을 처리하지 못했습니다: 인터넷 연결상태를 확인해보세요");
+                document.getElementById("bankbtn").disabled = false
               }
             }
           }
