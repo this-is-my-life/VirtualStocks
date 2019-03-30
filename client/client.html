@@ -13,6 +13,9 @@
   </head>
   <body>
       <div class="container">
+          <div class="alert alert-primary" role="alert">
+            "매수"탭에서 주를 1개 이상 사면 계정이 생성됩니다 (초기돈은 100)
+          </div>
         <div id="title" class="title text-center top-margin"></div>
         <div id="mainWindow"></div>
         <nav class="navbar navbar-expand-sm navbar-light bg-primary fixed-bottom row">
@@ -52,7 +55,9 @@
       
       <script>
         let temp
+        console.log("Copyright (c) 2019. PMH Studio (with kimyui76). MIT Licensed.")
         getchart()
+
         function getchart () {
           document.getElementById("chart").classList.replace("btn-primary", "btn-dark")
           document.getElementById("buy").classList.replace("btn-dark", "btn-primary")
