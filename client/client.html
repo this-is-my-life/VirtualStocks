@@ -115,9 +115,9 @@
               if (xhr.status== 200){
                 let chart = JSON.parse(xhr.responseText).chart
                 for (let counter = 0; counter < chart.length; counter++) {
-                  temp += "<option>" + chart[counter].name + "</option>"
+                  temp += "<option value=\"" + counter + "\">" + chart[counter].name + "</option>"
                 }
-                temp += "</select>\n</div><div class=\"form-group\"><label for=\"buyCount\">매수할 주식수</label><input type=\"number\" class=\"form-control\" id=\"buyCount\" placeholder=\"ex) 4\"></div><button class=\"btn-danger btn right-margin\"onclick=\"buyReset()\">초기화</button></div><button class=\"btn-primary btn left-margin\"onclick=\"buyCheck()\">매수 진행</button>"
+                temp += "</select>\n</div><div class=\"form-group\"><label for=\"buyCount\">매수할 주식수</label><input type=\"number\" class=\"form-control\" id=\"buyCount\" placeholder=\"ex) 4\"></div><button class=\"btn-danger btn right-margin\"onclick=\"buyReset()\">초기화</button></div><button class=\"btn-primary btn left-margin\"onclick=\"buy()\">매수 진행</button>"
                 document.getElementById('mainWindow').innerHTML = temp
                 document.getElementById("title").innerHTML = "<h2>주 매수</h2>"
               } else {
@@ -127,9 +127,91 @@
           }
         }
 
-        function buyreset () {
-          
+        function buyReset () {
+          document.getElementById("buyName").value = ""
+          document.getElementById("buyPasswd").value = ""
+          document.getElementById("buySelect").value = 0
+          document.getElementById("buyCount").value = ""
         }
+
+        function buy () {
+          var xhr= new XMLHttpRequest()
+          var target= "https://api.jsonbin.io/b/5c9cd7b9da12e364adfb7737/latest"
+          xhr.open("GET", target)
+          xhr.send()
+
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState=== XMLHttpRequest.DONE){
+              if (xhr.status== 200){
+                let chart = JSON.parse(xhr.responseText).chart
+                var xhr2= new XMLHttpRequest()
+                var target2= "https://api.jsonbin.io/b/5c9ebada1c56bb1ec391d410/latest"
+                xhr2.open("GET", target2)
+                xhr2.send()
+
+                xhr2.onreadystatechange = function() {
+                  if (xhr2.readyState=== XMLHttpRequest.DONE){
+                    if (xhr2.status== 200){
+                      let have = JSON.parse(xhr2.responseText)
+                      if (!document.getElementById("buyName").value) {
+                          document.getElementById("buyName").style.backgroundColor = "lightpink"
+                      } else {
+                          document.getElementById("buyName").style.backgroundColor = "lightgreen"
+                        if (!have[document.getElementById("buyName").value]) {
+                          have[document.getElementById("buyName").value] = {
+                            password: document.getElementById("buyPasswd").value,
+                            have: [30, 0, 0, 0, 0, 0, 0]
+                          }
+                        }
+                        if (have[document.getElementById("buyName").value].password === document.getElementById("buyPasswd").value) {
+                          document.getElementById("buyPasswd").style.backgroundColor = "lightgreen"
+                          document.getElementById("buySelect").style.backgroundColor = "lightgreen"
+                          if (!document.getElementById("buyCount").value || document.getElementById("buyCount").value <= 0 || document.getElementById("buyCount").value > chart[document.getElementById("buySelect").value].count) {
+                            document.getElementById("buyCount").style.backgroundColor = "lightpink"
+                          } else {
+                            document.getElementById("buyCount").style.backgroundColor = "lightgreen"
+                            
+                          }
+                        } else {
+                          document.getElementById("buyPasswd").style.backgroundColor = "lightpink"
+                        }
+                      }
+                      console.log(have)
+                    } else {
+                      alert("fail to load");
+                    }
+                  }
+                }
+              } else {
+                alert("fail to load");
+              }
+            }
+          }
+        }
+
+        function put(path, params, method) {
+          method = method || "put"; // Set method to post by default if not specified.
+
+          // The rest of this code assumes you are not using a library.
+          // It can be made less wordy if you use one.
+          var form = document.createElement("form");
+          form.setAttribute("method", method);
+          form.setAttribute("action", path);
+
+          for(var key in params) {
+              if(params.hasOwnProperty(key)) {
+                  var hiddenField = document.createElement("input");
+                  hiddenField.setAttribute("type", "hidden");
+                  hiddenField.setAttribute("name", key);
+                  hiddenField.setAttribute("value", params[key]);
+
+                  form.appendChild(hiddenField);
+              }
+          }
+
+          document.body.appendChild(form);
+          form.submit();
+      }
       </script>
   </body>
 </html>
