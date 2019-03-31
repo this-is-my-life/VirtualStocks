@@ -112,9 +112,9 @@
                 if (nextDelay < 0) {
                   nextDelay = 0
                 }
-              temp += "</tbody></table><hr />이전 가격 변동: " + last.getHours() + " : " + last.getMinutes() + "<br/>다음 가격 변동: " + next.getHours() + " : " + next.getMinutes() + " (" + nextDelay + "초후)"
+              temp += "</tbody></table><hr />이전 가격 변동: " + last.getHours() + " : " + last.getMinutes() + " (" + info.routine + "번째 변동)<br/>다음 가격 변동: " + next.getHours() + " : " + next.getMinutes() + " (" + nextDelay + "초 후 다음 변동)"
               document.getElementById('mainWindow').innerHTML = temp
-              document.getElementById("title").innerHTML = "<h2>" + (now.getMonth() + 1) + "/" + now.getDate() + " 주식시장</h2>"
+              document.getElementById("title").innerHTML = "<h2>" + info.session + "시즌 " + (now.getMonth() + 1) + "/" + now.getDate() + " 주식시장</h2>"
               document.getElementById("chart").disabled = false
               } else {
                 alert("요청을 처리하지 못했습니다: 인터넷 연결상태를 확인해보세요");
