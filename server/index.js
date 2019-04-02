@@ -11,7 +11,7 @@ function processStart () {
     let last = new Date()
     let next = new Date()
     response.body.info.lastUpdate = last
-    next.setTime(last.getTime() + (process.env.cycleDelay * 60 * 1000))
+    next.setTime(last.getTime() + (process.env.cycleDelay * 1000))
     response.body.info.nextUpdate = next
     for (let counter = 0; counter < response.body.chart.length; counter++) {
       response.body.chart[counter].before = response.body.chart[counter].after
