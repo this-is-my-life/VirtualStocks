@@ -24,7 +24,7 @@ function processStart () {
         } else {
           response.body.chart[counter].after -= random3
         }
-        if (response.body.chart[counter].after < 0) {
+        if (response.body.chart[counter].after <= 0) {
           response.body.chart[counter].after = response.body.chart[counter].before
         }
       } else if (response.body.chart[counter].name === '뮤트테크') {
@@ -36,7 +36,7 @@ function processStart () {
         } else {
           response.body.chart[counter].after -= random3
         }
-        if (response.body.chart[counter].after < 0) {
+        if (response.body.chart[counter].after <= 0) {
           response.body.chart[counter].after = response.body.chart[counter].before
         }
       } else if (response.body.chart[counter].name === 'TK전자') {
@@ -48,7 +48,7 @@ function processStart () {
         } else {
           response.body.chart[counter].after -= random3
         }
-        if (response.body.chart[counter].after < 0) {
+        if (response.body.chart[counter].after <= 0) {
           response.body.chart[counter].after = response.body.chart[counter].before
         }
       } else if (response.body.chart[counter].name === 'PC가전') {
@@ -60,7 +60,7 @@ function processStart () {
         } else {
           response.body.chart[counter].after -= random3
         }
-        if (response.body.chart[counter].after < 0) {
+        if (response.body.chart[counter].after <= 0) {
           response.body.chart[counter].after = response.body.chart[counter].before
         }
       } else if (response.body.chart[counter].name === '피엠산업') {
@@ -72,7 +72,7 @@ function processStart () {
         } else {
           response.body.chart[counter].after -= random3
         }
-        if (response.body.chart[counter].after < 0) {
+        if (response.body.chart[counter].after <= 0) {
           response.body.chart[counter].after = response.body.chart[counter].before
         }
       } else if (response.body.chart[counter].name === '비빔밥사') {
@@ -84,7 +84,7 @@ function processStart () {
         } else {
           response.body.chart[counter].after -= random3
         }
-        if (response.body.chart[counter].after < 0) {
+        if (response.body.chart[counter].after <= 0) {
           response.body.chart[counter].after = response.body.chart[counter].before
         }
       }
