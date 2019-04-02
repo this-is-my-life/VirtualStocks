@@ -3,7 +3,7 @@ const superagent = require('superagent')
 processStart()
 setInterval(() => {
   processStart()
-}, process.env.cycleDelay * 60 * 1000);
+}, process.env.cycleDelay * 1000);
 
 function processStart () {
   superagent.get('https://api.jsonbin.io/b/5c9cd7b9da12e364adfb7737/latest').then((response) => {
@@ -11,7 +11,7 @@ function processStart () {
     let last = new Date()
     let next = new Date()
     response.body.info.lastUpdate = last
-    next.setTime(last.getTime() + (process.env.cycleDelay * 60 * 1000))
+    next.setTime(last.getTime() + (process.env.cycleDelay * 1000))
     response.body.info.nextUpdate = next
     for (let counter = 0; counter < response.body.chart.length; counter++) {
       response.body.chart[counter].before = response.body.chart[counter].after
