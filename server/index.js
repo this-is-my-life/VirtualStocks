@@ -3,7 +3,7 @@ const superagent = require('superagent')
 processStart()
 setInterval(() => {
   processStart()
-}, process.env.cycleDelay * 60 * 1000);
+}, process.env.cycleDelay * 1000);
 
 function processStart () {
   superagent.get('https://api.jsonbin.io/b/5c9cd7b9da12e364adfb7737/latest').then((response) => {
