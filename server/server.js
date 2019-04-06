@@ -2,15 +2,15 @@ const superagent = require('superagent')
 let obt1HackBlock
 superagent.get('https://api.jsonbin.io/b/5ca80c270f4c9334823b59dc/latest').then((response) => {
   obt1HackBlock = response
-})
 
-cbtServer()
-obt1Server()
-
-setInterval(() => {
   cbtServer()
   obt1Server()
-}, process.env.cycleDelay * 1000);
+  
+  setInterval(() => {
+    cbtServer()
+    obt1Server()
+  }, process.env.cycleDelay * 1000);
+})
 
 function obt1Server () {
   obt1HackBlock.body.info.routine++
