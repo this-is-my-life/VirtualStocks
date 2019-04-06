@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>VirtualStocks API</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  </head>
+  <body>
+      <div class="container">
+          <div class="alert alert-warning" role="alert">
+            공지: 이 버전은 아직 개발중이므로 작동하지않는 기능이나 오류, 밸런스 붕괴가 있을 수 있습니다
+          </div>
+        <div id="title" class="title text-center top-margin"></div>
+        <div id="mainWindow"></div>
+        <nav class="navbar navbar-expand-sm navbar-light bg-primary fixed-bottom row">
+          <button class="btn btn-primary left-margin" id="chart" onclick="getChart()">차트</button>
+          <button class="btn btn-primary" id="leaderboard" onclick="getLeaderboard()">순위</button>
+          <button class="btn btn-primary" id="buy" onclick="getBuy()">매수</button>
+          <button class="btn btn-primary" id="sell" onclick="getSell()">매도</button>
+          <button class="btn btn-primary" id="bank" onclick="getBank()">은행</button>
+          <!-- <button class="btn btn-primary right-margin" id="casino" onclick="getCasino()">도박</button> -->
+        </nav>
+      </div>
+
+
+      <style>
+        @import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css);
+
+        #mainWindow {
+          margin-bottom: 20%
+        }
+        
+        .title {
+          font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        .left-margin {
+          margin-left: 5px;
+        }
+
+        .right-margin {
+          margin-right: 5px;
+        }
+
+        .top-margin {
+          margin-top: 5px;
+        }
+      </style>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+      
+      <script>
+        let temp
+        let chartCycle
+        console.info("Copyright (c) 2019. PMH Studio (with kimyui76). MIT Licensed.")
+        getChart()
+
+        setInterval(() => {
+          if (chartCycle) {
+            getChart()
+          }
+        }, 1000)
+
+        function getChart () {
+          chartCycle = true
+          document.getElementById("chart").disabled = true
+          document.getElementById("chart").classList.replace("btn-primary", "btn-light")
+          document.getElementById("leaderboard").classList.replace("btn-light", "btn-primary")
+          document.getElementById("buy").classList.replace("btn-light", "btn-primary")
+          document.getElementById("sell").classList.replace("btn-light", "btn-primary")
+          document.getElementById("bank").classList.replace("btn-light", "btn-primary")
+          // document.getElementById("casino").classList.replace("btn-light", "btn-primary")
+          temp = "<table class=\"table top-margin\"><thead><th scope=\"col\">종목명</th><th scope=\"col\">전가격 대비</th><th scope=\"col\">현재가격</th><th scope=\"col\">남은 주</th></tr></thead><tbody>"
+          // get JSON with using pure javascript
+          var xhr= new XMLHttpRequest()
+          var target= "https://api.jsonbin.io/b/5ca80c270f4c9334823b59dc/latest"
+          xhr.open("GET", target)
+          xhr.send()
+
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState=== XMLHttpRequest.DONE){
+              if (xhr.status== 200){
+                let info = JSON.parse(xhr.responseText).info
+                let chart = JSON.parse(xhr.responseText).chart
+                for (let counter = 0; counter < chart.length; counter++) {
+                  temp += "<tr><td scope=\"row\">" + chart[counter].name + "</td>"
+                  if (chart[counter].after < chart[counter].before) {
+                    temp += "<td style=\"color: red;\"> ▼ " + (chart[counter].before - chart[counter].after) + "</td>"
+                  }
+                  if (chart[counter].after > chart[counter].before) {
+                    temp += "<td style=\"color: green;\"> ▲ " + (chart[counter].after - chart[counter].before) + "</td>"
+                  }
+                  if (chart[counter].after === chart[counter].before) {
+                    temp += "<td> - " + 0 + "</td>"
+                  }
+                  temp += "<td>" + chart[counter].after + "</td>"
+                  temp += "<td>" + chart[counter].count + "주</td></tr>"
+                }
+                let last = new Date(info.lastUpdate)
+                let next = new Date(info.nextUpdate)
+                let now = new Date()
+                let nextDelay = Math.round((next.getTime() - now.getTime()) / 1000)
+                if (nextDelay < 0) {
+                  nextDelay = 0
+                }
+              temp += "</tbody></table><hr />이전 가격 변동: " + last.getHours() + " : " + last.getMinutes() + " (" + info.routine + "번째 변동)<br/>다음 가격 변동: " + next.getHours() + " : " + next.getMinutes() + " (" + nextDelay + "초 후 다음 변동)"
+              document.getElementById('mainWindow').innerHTML = temp
+              document.getElementById("title").innerHTML = "<h2>" + info.session + "시즌 " + (now.getMonth() + 1) + "/" + now.getDate() + " 주식시장</h2>"
+              document.getElementById("chart").disabled = false
+              } else {
+                alert("요청을 처리하지 못했습니다: 인터넷 연결상태를 확인해보세요");
+                document.getElementById("chart").disabled = false
+              }
+            }
+          }
+        }
+
+        function getLeaderboard () {
+          chartCycle = false
+          document.getElementById("leaderboard").disabled = true
+          document.getElementById("chart").classList.replace("btn-light", "btn-primary")
+          document.getElementById("leaderboard").classList.replace("btn-primary", "btn-light")
+          document.getElementById("buy").classList.replace("btn-light", "btn-primary")
+          document.getElementById("sell").classList.replace("btn-light", "btn-primary")
+          document.getElementById("bank").classList.replace("btn-light", "btn-primary")
+          temp = "<table class=\"table top-margin\"><thead><th scope=\"col\">#</th><th scope=\"col\">이름</th><th scope=\"col\">자산</th></tr></thead><tbody>"
+          var xhr= new XMLHttpRequest()
+          var target= "https://api.jsonbin.io/b/5ca80f45acae34349ddff3fb/latest"
+          xhr.open("GET", target)
+          xhr.send()
+
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState=== XMLHttpRequest.DONE){
+              if (xhr.status== 200){
+                let have = JSON.parse(xhr.responseText)
+                let players = []
+                let counter = 0
+                for (let key in have) {
+                  players[counter] = key
+                  counter++
+                }
+                for (counter1 = 0; counter1 < players.length - 1; counter1++) {
+                  for (let counter2 = 0; counter2 < players.length - counter1 - 1; counter2++) {
+                    if (have[players[counter2]].have[0] < have[players[counter2 + 1]].have[0]) {
+                      let temp1 = players[counter2]
+                      let temp2 = players[counter2 + 1]
+                      players[counter2] = temp2
+                      players[counter2 + 1] = temp1
+                    }
+                  }
+                }
+                for (counter3 = 0; counter3 < players.length; counter3++) {
+                  temp += "<tr><td scope=\"row\">" + (counter3 + 1) + "</td>"
+                  temp += "<td>" + players[counter3] + "</td>"
+                  temp += "<td>" + have[players[counter3]].have[0] + "</td></tr>"
+                }
+                temp += "</tbody></table>"
+                document.getElementById('mainWindow').innerHTML = temp
+                document.getElementById("title").innerHTML = "<h2>전체 순위</h2>"
+                document.getElementById("leaderboard").disabled = false
+              } else {
+                alert("요청을 처리하지 못했습니다: 인터넷 연결상태를 확인해보세요");
+                document.getElementById("leaderboard").disabled = false
+              }
+            }
+          }
+        }
+
+        function getBuy () {
+          chartCycle = false
+          document.getElementById("buy").disabled = true
+          document.getElementById("chart").classList.replace("btn-light", "btn-primary")
+          document.getElementById("leaderboard").classList.replace("btn-light", "btn-primary")
+          document.getElementById("buy").classList.replace("btn-primary", "btn-light")
+          document.getElementById("sell").classList.replace("btn-light", "btn-primary")
+          document.getElementById("bank").classList.replace("btn-light", "btn-primary")
+          // document.getElementById("casino").classList.replace("btn-light", "btn-primary")
+          temp = "<div class=\"form-group\"><label for=\"buyName\">매수자</label><input type=\"text\" class=\"form-control\" id=\"buyName\" placeholder=\"ex) PMH\"></div><div class=\"form-group\"><label for=\"buyPasswd\">매수자 비밀번호</label><input type=\"password\" class=\"form-control\" id=\"buyPasswd\" placeholder=\"비밀번호를 정한적이 없을경우 새로 만듭니다\"></div><div class=\"form-group\">\n<label for=\"buySelect\">매수할 종목명</label>\n<select class=\"form-control\" id=\"buySelect\">"
+          var xhr= new XMLHttpRequest()
+          var target= "https://api.jsonbin.io/b/5ca80c270f4c9334823b59dc/latest"
+          xhr.open("GET", target)
+          xhr.send()
+
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState=== XMLHttpRequest.DONE){
+              if (xhr.status== 200){
+                let chart = JSON.parse(xhr.responseText).chart
+                for (let counter = 0; counter < chart.length; counter++) {
+                  temp += "<option value=\"" + counter + "\">" + chart[counter].name + "</option>"
+                }
+                temp += "</select>\n</div><div class=\"form-group\"><label for=\"buyCount\">매수할 주식 수</label><input type=\"number\" class=\"form-control\" id=\"buyCount\" onkeydown=\"caculateBuy()\" onkeyup=\"caculateBuy()\" min=\"1\" max=\"100\" placeholder=\"ex) 4\"></div><button class=\"btn-danger btn right-margin\"onclick=\"buyReset()\">초기화</button></div><button class=\"btn-primary btn left-margin\" id=\"buybtn\" onclick=\"buy()\">매수 진행</button>"
+                document.getElementById('mainWindow').innerHTML = temp
+                document.getElementById("title").innerHTML = "<h2>매수증서 작성</h2>"
+                document.getElementById("buy").disabled = false
+              } else {
+                alert("요청을 처리하지 못했습니다: 인터넷 연결상태를 확인해보세요");
+                document.getElementById("buy").disabled = false
+              }
+            }
+          }
+        }
+
+        function getSell () {
+          chartCycle = false
+          document.getElementById("sell").disabled = true
+          document.getElementById("chart").classList.replace("btn-light", "btn-primary")
+          document.getElementById("leaderboard").classList.replace("btn-light", "btn-primary")
+          document.getElementById("buy").classList.replace("btn-light", "btn-primary")
+          document.getElementById("sell").classList.replace("btn-primary", "btn-light")
+          document.getElementById("bank").classList.replace("btn-light", "btn-primary")
+          // document.getElementById("casino").classList.replace("btn-light", "btn-primary")
+          temp = "<div class=\"form-group\"><label for=\"selName\">매도자</label><input type=\"text\" class=\"form-control\" id=\"selName\" placeholder=\"ex) PMH\"></div><div class=\"form-group\"><label for=\"selPasswd\">매도자 비밀번호</label><input type=\"password\" class=\"form-control\" id=\"selPasswd\" placeholder=\"비밀번호를 정한적이 없을경우 새로 만듭니다\"></div><div class=\"form-group\">\n<label for=\"selSelect\">매도할 종목명</label>\n<select class=\"form-control\" id=\"selSelect\">"
+          var xhr= new XMLHttpRequest()
+          var target= "https://api.jsonbin.io/b/5ca80c270f4c9334823b59dc/latest"
+          xhr.open("GET", target)
+          xhr.send()
+
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState=== XMLHttpRequest.DONE){
+              if (xhr.status== 200){
+                let chart = JSON.parse(xhr.responseText).chart
+                for (let counter = 0; counter < chart.length; counter++) {
+                  temp += "<option value=\"" + counter + "\">" + chart[counter].name + "</option>"
+                }
+                temp += "</select>\n</div><div class=\"form-group\"><label for=\"selCount\">매도할 주식 수</label><input type=\"number\" class=\"form-control\" id=\"selCount\" onkeydown=\"caculateSel()\" onkeyup=\"caculateSel()\" min=\"1\" max=\"100\" placeholder=\"ex) 4\"></div><button class=\"btn-danger btn right-margin\"onclick=\"selReset()\">초기화</button></div><button class=\"btn-primary btn left-margin\" id=\"sellbtn\" onclick=\"sel()\">매도 진행</button>"
+                document.getElementById('mainWindow').innerHTML = temp
+                document.getElementById("title").innerHTML = "<h2>매도증서 작성</h2>"
+                document.getElementById("sell").disabled = false
+              } else {
+                alert("요청을 처리하지 못했습니다: 인터넷 연결상태를 확인해보세요");
+                document.getElementById("sell").disabled = false
+              }
+            }
+          }
+        }
+
+        function getBank () {
+          chartCycle = false
+          document.getElementById("bank").disabled = true
+          document.getElementById("chart").classList.replace("btn-light", "btn-primary")
+          document.getElementById("leaderboard").classList.replace("btn-light", "btn-primary")
+          document.getElementById("buy").classList.replace("btn-light", "btn-primary")
+          document.getElementById("sell").classList.replace("btn-light", "btn-primary")
+          document.getElementById("bank").classList.replace("btn-primary", "btn-light")
+          // document.getElementById("casino").classList.replace("btn-light", "btn-primary")
+          temp = "<div class=\"form-group\"><label for=\"selName\">조회할 이름</label><input type=\"text\" class=\"form-control\" id=\"bankName\" placeholder=\"ex) PMH\"></div><button class=\"btn-primary btn fixed\" id=\"bankbtn\" onclick=\"bank()\">잔고, 가진 주 조회</button><hr /><div id=\"bankWindow\"></div>"
+          document.getElementById('mainWindow').innerHTML = temp
+          document.getElementById("title").innerHTML = "<h2>은행</h2>"
+          document.getElementById("bank").disabled = false
+        }
+
+        function getCasino () {
+          chartCycle = false
+          document.getElementById("casino").disabled = true
+          document.getElementById("chart").classList.replace("btn-light", "btn-primary")
+          document.getElementById("leaderboard").classList.replace("btn-light", "btn-primary")
+          document.getElementById("buy").classList.replace("btn-light", "btn-primary")
+          document.getElementById("sell").classList.replace("btn-light", "btn-primary")
+          document.getElementById("bank").classList.replace("btn-light", "btn-primary")
+          document.getElementById("casino").classList.replace("btn-primary", "btn-light")
+          temp = ""
+          document.getElementById('mainWindow').innerHTML = temp
+          document.getElementById("title").innerHTML = "<h2>공사중...</h2>"
+          document.getElementById("casino").disabled = false
+        }
+        
+        function buyReset () {
+          document.getElementById("buyName").value = ""
+          document.getElementById("buyPasswd").value = ""
+          document.getElementById("buySelect").value = 0
+          document.getElementById("buyCount").value = ""
+        }
+
+        function selReset () {
+          document.getElementById("selName").value = ""
+          document.getElementById("selPasswd").value = ""
+          document.getElementById("selSelect").value = 0
+          document.getElementById("selCount").value = ""
+        }
+
+        function caculateBuy () {
+          var xhr= new XMLHttpRequest()
+          var target= "https://api.jsonbin.io/b/5ca80c270f4c9334823b59dc/latest"
+          xhr.open("GET", target)
+          xhr.send()
+
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState=== XMLHttpRequest.DONE){
+              if (xhr.status== 200){
+                let chart = JSON.parse(xhr.responseText)
+                document.getElementById("buybtn").innerHTML = "매수 진행 (-" + (document.getElementById("buyCount").value * chart.chart[document.getElementById("buySelect").value].after) + ")"
+              } else {
+                alert("요청을 처리하지 못했습니다: 인터넷 연결상태를 확인해보세요");
+              }
+            }
+          }
+        }
+
+        function caculateSel () {
+          var xhr= new XMLHttpRequest()
+          var target= "https://api.jsonbin.io/b/5ca80c270f4c9334823b59dc/latest"
+          xhr.open("GET", target)
+          xhr.send()
+
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState=== XMLHttpRequest.DONE){
+              if (xhr.status== 200){
+                let chart = JSON.parse(xhr.responseText)
+                document.getElementById("sellbtn").innerHTML = "매도 진행 (+" + (document.getElementById("selCount").value * chart.chart[document.getElementById("selSelect").value].after) + ")"
+              } else {
+                alert("요청을 처리하지 못했습니다: 인터넷 연결상태를 확인해보세요");
+              }
+            }
+          }
+        }
+
+        function buy () {
+          document.getElementById("buybtn").disabled = true
+          var xhr= new XMLHttpRequest()
+          var target= "https://api.jsonbin.io/b/5ca80c270f4c9334823b59dc/latest"
+          xhr.open("GET", target)
+          xhr.send()
+
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState=== XMLHttpRequest.DONE){
+              if (xhr.status== 200){
+                let chart = JSON.parse(xhr.responseText)
+                var xhr2= new XMLHttpRequest()
+                var target2= "https://api.jsonbin.io/b/5ca80f45acae34349ddff3fb/latest"
+                xhr2.open("GET", target2)
+                xhr2.send()
+
+                xhr2.onreadystatechange = function() {
+                  if (xhr2.readyState=== XMLHttpRequest.DONE){
+                    if (xhr2.status== 200){
+                      let have = JSON.parse(xhr2.responseText)
+                      if (!document.getElementById("buyName").value) {
+                          document.getElementById("buyName").style.backgroundColor = "lightpink"
+                          document.getElementById("buybtn").disabled = false
+                      } else {
+                          document.getElementById("buyName").style.backgroundColor = "lightgreen"
+                        if (!have[document.getElementById("buyName").value]) {
+                          have[document.getElementById("buyName").value] = {
+                            password: document.getElementById("buyPasswd").value,
+                            have: [100, 0, 0, 0, 0, 0, 0]
+                          }
+                        }
+                        if (have[document.getElementById("buyName").value].password === document.getElementById("buyPasswd").value) {
+                          document.getElementById("buyPasswd").style.backgroundColor = "lightgreen"
+                          document.getElementById("buySelect").style.backgroundColor = "lightgreen"
+                          if (!document.getElementById("buyCount").value || document.getElementById("buyCount").value <= 0 || document.getElementById("buyCount").value > chart.chart[document.getElementById("buySelect").value].count) {
+                            document.getElementById("buyCount").style.backgroundColor = "lightpink"
+                          document.getElementById("buybtn").disabled = false
+                          } else {
+                            document.getElementById("buyCount").style.backgroundColor = "lightgreen"
+                            if (have[document.getElementById("buyName").value].have[0] < document.getElementById("buyCount").value * chart.chart[document.getElementById("buySelect").value].after) {
+                              document.getElementById("buyCount").style.backgroundColor = "lightpink"
+                          document.getElementById("buybtn").disabled = false
+                            } else {
+                              chart.chart[parseInt(document.getElementById("buySelect").value)].count -= parseInt(document.getElementById("buyCount").value)
+                              have[document.getElementById("buyName").value].have[parseInt(document.getElementById("buySelect").value) + 1] += parseInt(document.getElementById("buyCount").value)
+                              have[document.getElementById("buyName").value].have[0] -= (document.getElementById("buyCount").value * chart.chart[document.getElementById("buySelect").value].after)
+                              put("https://api.jsonbin.io/b/5ca80f45acae34349ddff3fb", have)
+                              put("https://api.jsonbin.io/b/5ca80c270f4c9334823b59dc", chart)
+                              getChart()
+                              document.getElementById("buybtn").disabled = false
+                            }
+                          }
+                        } else {
+                          document.getElementById("buyPasswd").style.backgroundColor = "lightpink"
+                          document.getElementById("buybtn").disabled = false
+                        }
+                      }
+                    } else {
+                      alert("요청을 처리하지 못했습니다: 인터넷 연결상태를 확인해보세요");
+                      document.getElementById("buybtn").disabled = false
+                    }
+                  }
+                }
+              } else {
+                alert("요청을 처리하지 못했습니다: 인터넷 연결상태를 확인해보세요");
+                document.getElementById("buybtn").disabled = false
+              }
+            }
+          }
+        }
+
+        function sel () {
+          document.getElementById("sellbtn").disabled = true
+          var xhr= new XMLHttpRequest()
+          var target= "https://api.jsonbin.io/b/5ca80c270f4c9334823b59dc/latest"
+          xhr.open("GET", target)
+          xhr.send()
+
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState=== XMLHttpRequest.DONE){
+              if (xhr.status== 200){
+                let chart = JSON.parse(xhr.responseText)
+                var xhr2= new XMLHttpRequest()
+                var target2= "https://api.jsonbin.io/b/5ca80f45acae34349ddff3fb/latest"
+                xhr2.open("GET", target2)
+                xhr2.send()
+
+                xhr2.onreadystatechange = function() {
+                  if (xhr2.readyState=== XMLHttpRequest.DONE){
+                    if (xhr2.status== 200){
+                      let have = JSON.parse(xhr2.responseText)
+                      if (!document.getElementById("selName").value) {
+                          document.getElementById("selName").style.backgroundColor = "lightpink"
+                          document.getElementById("sellbtn").disabled = false
+                      } else {
+                          document.getElementById("selName").style.backgroundColor = "lightgreen"
+                        if (!have[document.getElementById("selName").value]) {
+                          have[document.getElementById("selName").value] = {
+                            password: document.getElementById("selPasswd").value,
+                            have: [100, 0, 0, 0, 0, 0, 0]
+                          }
+                        }
+                        if (have[document.getElementById("selName").value].password === document.getElementById("selPasswd").value) {
+                          document.getElementById("selPasswd").style.backgroundColor = "lightgreen"
+                          document.getElementById("selSelect").style.backgroundColor = "lightgreen"
+                          if (!document.getElementById("selCount").value || document.getElementById("selCount").value <= 0 || document.getElementById("selCount").value > have[document.getElementById("selName").value].have[parseInt(document.getElementById("selSelect").value) + 1]) {
+                            document.getElementById("selCount").style.backgroundColor = "lightpink"
+                          document.getElementById("sellbtn").disabled = false
+                          } else {
+                            document.getElementById("selCount").style.backgroundColor = "lightgreen"
+                            chart.chart[parseInt(document.getElementById("selSelect").value)].count += parseInt(document.getElementById("selCount").value)
+                            have[document.getElementById("selName").value].have[parseInt(document.getElementById("selSelect").value) + 1] -= parseInt(document.getElementById("selCount").value)
+                            have[document.getElementById("selName").value].have[0] += (document.getElementById("selCount").value * chart.chart[document.getElementById("selSelect").value].after)
+                            put("https://api.jsonbin.io/b/5ca80f45acae34349ddff3fb", have)
+                            put("https://api.jsonbin.io/b/5ca80c270f4c9334823b59dc", chart)
+                            getChart()
+                            document.getElementById("sellbtn").disabled = false
+                          }
+                        } else {
+                          document.getElementById("selPasswd").style.backgroundColor = "lightpink"
+                          document.getElementById("sellbtn").disabled = false
+                        }
+                      }
+                    } else {
+                      alert("요청을 처리하지 못했습니다: 인터넷 연결상태를 확인해보세요");
+                      document.getElementById("sellbtn").disabled = false
+                    }
+                  }
+                }
+              } else {
+                alert("요청을 처리하지 못했습니다: 인터넷 연결상태를 확인해보세요");
+                document.getElementById("sellbtn").disabled = false
+              }
+            }
+          }
+        }
+
+        function bank () {
+          document.getElementById("bankbtn").disabled = true
+          var xhr= new XMLHttpRequest()
+          var target= "https://api.jsonbin.io/b/5ca80f45acae34349ddff3fb/latest"
+          xhr.open("GET", target)
+          xhr.send()
+
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState=== XMLHttpRequest.DONE){
+              if (xhr.status== 200){
+                if (!JSON.parse(xhr.responseText)[document.getElementById("bankName").value]) {
+                  temp = "가진돈: 100<hr />HC주식회사: 0주<br />뮤트테크: 0주<br />TK전자: 0주<br />PC가전: 0주<br />피엠산업: 0주<br />비빔밥사: 0주"
+                } else {
+                  temp = "가진돈: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[0] + "<hr />HC주식회사: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[1] + "주<br />뮤트테크: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[2] + "주<br />TK전자: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[3] + "주<br />PC가전: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[4] + "주<br />피엠산업: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[5] + "주<br />비빔밥사: " + JSON.parse(xhr.responseText)[document.getElementById("bankName").value].have[6] + "주"
+                }
+                document.getElementById('bankWindow').innerHTML = temp
+                document.getElementById("bankbtn").disabled = false 
+              } else {
+                alert("요청을 처리하지 못했습니다: 인터넷 연결상태를 확인해보세요");
+                document.getElementById("bankbtn").disabled = false
+              }
+            }
+          }
+        }
+
+        function put (path, params) {
+          let xhrp = Array
+          xhrp[path] = new XMLHttpRequest()
+          xhrp[path].open("PUT", path)
+          xhrp[path].setRequestHeader('Content-Type', 'application/json')
+          xhrp[path].send(JSON.stringify(params))
+        }
+      </script>
+  </body>
+</html>
