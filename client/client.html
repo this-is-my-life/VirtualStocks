@@ -184,7 +184,7 @@
           document.getElementById("sell").classList.replace("btn-light", "btn-primary")
           document.getElementById("bank").classList.replace("btn-light", "btn-primary")
           // document.getElementById("casino").classList.replace("btn-light", "btn-primary")
-          temp = "<div class=\"form-group\"><label for=\"buyName\">매수자</label><input type=\"text\" class=\"form-control\" id=\"buyName\" placeholder=\"ex) 박민혁\"></div><div class=\"form-group\"><label for=\"buyPasswd\">매수자 비밀번호</label><input type=\"password\" class=\"form-control\" id=\"buyPasswd\" placeholder=\"비밀번호를 정한적이 없을경우 새로 만듭니다\"></div><div class=\"form-group\">\n<label for=\"buySelect\">매수할 종목명</label>\n<select class=\"form-control\" id=\"buySelect\">"
+          temp = "<div class=\"form-group\"><label for=\"buyName\">매수자</label><input type=\"text\" class=\"form-control\" id=\"buyName\" placeholder=\"ex) PMH\"></div><div class=\"form-group\"><label for=\"buyPasswd\">매수자 비밀번호</label><input type=\"password\" class=\"form-control\" id=\"buyPasswd\" placeholder=\"비밀번호를 정한적이 없을경우 새로 만듭니다\"></div><div class=\"form-group\">\n<label for=\"buySelect\">매수할 종목명</label>\n<select class=\"form-control\" id=\"buySelect\">"
           var xhr= new XMLHttpRequest()
           var target= "https://api.jsonbin.io/b/5c9cd7b9da12e364adfb7737/latest"
           xhr.open("GET", target)
@@ -197,7 +197,7 @@
                 for (let counter = 0; counter < chart.length; counter++) {
                   temp += "<option value=\"" + counter + "\">" + chart[counter].name + "</option>"
                 }
-                temp += "</select>\n</div><div class=\"form-group\"><label for=\"buyCount\">매수할 주식 수</label><input type=\"number\" class=\"form-control\" id=\"buyCount\" placeholder=\"ex) 4\"></div><button class=\"btn-danger btn right-margin\"onclick=\"buyReset()\">초기화</button></div><button class=\"btn-primary btn left-margin\" id=\"buybtn\" onclick=\"buy()\">매수 진행</button>"
+                temp += "</select>\n</div><div class=\"form-group\"><label for=\"buyCount\">매수할 주식 수</label><input type=\"number\" class=\"form-control\" id=\"buyCount\" onkeydown=\"caculateBuy()\" onkeyup=\"caculateBuy()\" min=\"1\" max=\"100\" placeholder=\"ex) 4\"></div><button class=\"btn-danger btn right-margin\"onclick=\"buyReset()\">초기화</button></div><button class=\"btn-primary btn left-margin\" id=\"buybtn\" onclick=\"buy()\">매수 진행</button>"
                 document.getElementById('mainWindow').innerHTML = temp
                 document.getElementById("title").innerHTML = "<h2>매수증서 작성</h2>"
                 document.getElementById("buy").disabled = false
@@ -218,7 +218,7 @@
           document.getElementById("sell").classList.replace("btn-primary", "btn-light")
           document.getElementById("bank").classList.replace("btn-light", "btn-primary")
           // document.getElementById("casino").classList.replace("btn-light", "btn-primary")
-          temp = "<div class=\"form-group\"><label for=\"selName\">매도자</label><input type=\"text\" class=\"form-control\" id=\"selName\" placeholder=\"ex) 박민혁\"></div><div class=\"form-group\"><label for=\"selPasswd\">매도자 비밀번호</label><input type=\"password\" class=\"form-control\" id=\"selPasswd\" placeholder=\"비밀번호를 정한적이 없을경우 새로 만듭니다\"></div><div class=\"form-group\">\n<label for=\"selSelect\">매도할 종목명</label>\n<select class=\"form-control\" id=\"selSelect\">"
+          temp = "<div class=\"form-group\"><label for=\"selName\">매도자</label><input type=\"text\" class=\"form-control\" id=\"selName\" placeholder=\"ex) PMH\"></div><div class=\"form-group\"><label for=\"selPasswd\">매도자 비밀번호</label><input type=\"password\" class=\"form-control\" id=\"selPasswd\" placeholder=\"비밀번호를 정한적이 없을경우 새로 만듭니다\"></div><div class=\"form-group\">\n<label for=\"selSelect\">매도할 종목명</label>\n<select class=\"form-control\" id=\"selSelect\">"
           var xhr= new XMLHttpRequest()
           var target= "https://api.jsonbin.io/b/5c9cd7b9da12e364adfb7737/latest"
           xhr.open("GET", target)
@@ -231,7 +231,7 @@
                 for (let counter = 0; counter < chart.length; counter++) {
                   temp += "<option value=\"" + counter + "\">" + chart[counter].name + "</option>"
                 }
-                temp += "</select>\n</div><div class=\"form-group\"><label for=\"selCount\">매도할 주식 수</label><input type=\"number\" class=\"form-control\" id=\"selCount\" placeholder=\"ex) 4\"></div><button class=\"btn-danger btn right-margin\"onclick=\"selReset()\">초기화</button></div><button class=\"btn-primary btn left-margin\" id=\"sellbtn\" onclick=\"sel()\">매도 진행</button>"
+                temp += "</select>\n</div><div class=\"form-group\"><label for=\"selCount\">매도할 주식 수</label><input type=\"number\" class=\"form-control\" id=\"selCount\" onkeydown=\"caculateSel()\" onkeyup=\"caculateSel()\" min=\"1\" max=\"100\" placeholder=\"ex) 4\"></div><button class=\"btn-danger btn right-margin\"onclick=\"selReset()\">초기화</button></div><button class=\"btn-primary btn left-margin\" id=\"sellbtn\" onclick=\"sel()\">매도 진행</button>"
                 document.getElementById('mainWindow').innerHTML = temp
                 document.getElementById("title").innerHTML = "<h2>매도증서 작성</h2>"
                 document.getElementById("sell").disabled = false
@@ -252,7 +252,7 @@
           document.getElementById("sell").classList.replace("btn-light", "btn-primary")
           document.getElementById("bank").classList.replace("btn-primary", "btn-light")
           // document.getElementById("casino").classList.replace("btn-light", "btn-primary")
-          temp = "<div class=\"form-group\"><label for=\"selName\">조회할 이름</label><input type=\"text\" class=\"form-control\" id=\"bankName\" placeholder=\"ex) 박민혁\"></div><button class=\"btn-primary btn fixed\" id=\"bankbtn\" onclick=\"bank()\">잔고, 가진 주 조회</button><hr /><div id=\"bankWindow\"></div>"
+          temp = "<div class=\"form-group\"><label for=\"selName\">조회할 이름</label><input type=\"text\" class=\"form-control\" id=\"bankName\" placeholder=\"ex) PMH\"></div><button class=\"btn-primary btn fixed\" id=\"bankbtn\" onclick=\"bank()\">잔고, 가진 주 조회</button><hr /><div id=\"bankWindow\"></div>"
           document.getElementById('mainWindow').innerHTML = temp
           document.getElementById("title").innerHTML = "<h2>은행</h2>"
           document.getElementById("bank").disabled = false
@@ -272,7 +272,7 @@
           document.getElementById("title").innerHTML = "<h2>공사중...</h2>"
           document.getElementById("casino").disabled = false
         }
-
+        
         function buyReset () {
           document.getElementById("buyName").value = ""
           document.getElementById("buyPasswd").value = ""
@@ -285,6 +285,42 @@
           document.getElementById("selPasswd").value = ""
           document.getElementById("selSelect").value = 0
           document.getElementById("selCount").value = ""
+        }
+
+        function caculateBuy () {
+          var xhr= new XMLHttpRequest()
+          var target= "https://api.jsonbin.io/b/5c9cd7b9da12e364adfb7737/latest"
+          xhr.open("GET", target)
+          xhr.send()
+
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState=== XMLHttpRequest.DONE){
+              if (xhr.status== 200){
+                let chart = JSON.parse(xhr.responseText)
+                document.getElementById("buybtn").innerHTML = "매수 진행 (-" + (document.getElementById("buyCount").value * chart.chart[document.getElementById("buySelect").value].after) + ")"
+              } else {
+                alert("요청을 처리하지 못했습니다: 인터넷 연결상태를 확인해보세요");
+              }
+            }
+          }
+        }
+
+        function caculateSel () {
+          var xhr= new XMLHttpRequest()
+          var target= "https://api.jsonbin.io/b/5c9cd7b9da12e364adfb7737/latest"
+          xhr.open("GET", target)
+          xhr.send()
+
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState=== XMLHttpRequest.DONE){
+              if (xhr.status== 200){
+                let chart = JSON.parse(xhr.responseText)
+                document.getElementById("sellbtn").innerHTML = "매도 진행 (+" + (document.getElementById("selCount").value * chart.chart[document.getElementById("selSelect").value].after) + ")"
+              } else {
+                alert("요청을 처리하지 못했습니다: 인터넷 연결상태를 확인해보세요");
+              }
+            }
+          }
         }
 
         function buy () {

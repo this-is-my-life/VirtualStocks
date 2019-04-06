@@ -92,6 +92,7 @@ function processStart () {
     console.log(response.body)
     superagent.put('https://api.jsonbin.io/b/5c9cd7b9da12e364adfb7737').send(response.body).catch((err) => { console.log(err) })
   })
+  
 }
 
 function getRandomInt(min, max) {
