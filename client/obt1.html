@@ -10,16 +10,23 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+      
   </head>
   <body>
       <div class="container">
-          <div class="alert alert-warning" role="alert">
-            공지: 이 버전은 아직 개발중이므로 작동하지않는 기능이나 오류, 밸런스 붕괴가 있을 수 있습니다
-          </div>
+        <div class="alert alert-warning alert-dismissible top-margin" id="notify">
+          <button type="button" class="close">&times;</button>
+          공지: 이 버전은 아직 개발중이므로 작동하지않는 기능이나 오류, 밸런스 붕괴가 있을 수 있습니다
+        </div>
         <div id="title" class="title text-center top-margin"></div>
         <div id="mainWindow"></div>
-        <nav class="navbar navbar-expand-sm navbar-light bg-primary fixed-bottom row">
-          <button class="btn btn-primary left-margin" id="chart" onclick="getChart()">차트</button>
+        <nav class="navbar navbar-expand-sm navbar-light bg-primary fixed-bottom row  d-flex justify-content-center">
+          <button class="btn btn-primary" id="chart" onclick="getChart()">차트</button>
           <button class="btn btn-primary" id="leaderboard" onclick="getLeaderboard()">순위</button>
           <button class="btn btn-primary" id="buy" onclick="getBuy()">매수</button>
           <button class="btn btn-primary" id="sell" onclick="getSell()">매도</button>
@@ -31,10 +38,6 @@
 
       <style>
         @import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css);
-
-        #mainWindow {
-          margin-bottom: 20%
-        }
         
         .title {
           font-family: 'Noto Sans KR', sans-serif;
@@ -52,13 +55,11 @@
           margin-top: 5px;
         }
       </style>
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-      
       <script>
+        $(".close").click(function(){
+          $("#notify").alert("close");
+        });
+
         let temp
         let chartCycle
         console.info("Copyright (c) 2019. PMH Studio (with kimyui76). MIT Licensed.")
@@ -112,10 +113,10 @@
                 if (nextDelay < 0) {
                   nextDelay = 0
                 }
-              temp += "</tbody></table><hr />이전 가격 변동: " + last.getHours() + " : " + last.getMinutes() + " (" + info.routine + "번째 변동)<br/>다음 가격 변동: " + next.getHours() + " : " + next.getMinutes() + " (" + nextDelay + "초 후 다음 변동)"
-              document.getElementById('mainWindow').innerHTML = temp
-              document.getElementById("title").innerHTML = "<h2>" + info.session + "시즌 " + (now.getMonth() + 1) + "/" + now.getDate() + " 주식시장</h2>"
-              document.getElementById("chart").disabled = false
+                temp += "</tbody></table>이전 가격 변동: " + last.getHours() + ":" + last.getMinutes() + ":" + Math.floor(parseFloat(last.getSeconds() + '.' + last.getMilliseconds())) + " (" + info.routine + "번째 변동)<br/>다음 가격 변동: " + next.getHours() + ":" + next.getMinutes() + ":" + Math.floor(parseFloat(next.getSeconds() + '.' + next.getMilliseconds())) + " (" + nextDelay + "초 후 다음 변동)<br />현재 시각 　　: " + now.getHours() + ":" + now.getMinutes() + ":" + Math.floor(parseFloat(now.getSeconds() + '.' + now.getMilliseconds()))
+                document.getElementById('mainWindow').innerHTML = temp
+                document.getElementById("title").innerHTML = "<h2>" + info.session + "시즌 " + (now.getMonth() + 1) + "/" + now.getDate() + " 주식시장</h2>"
+                document.getElementById("chart").disabled = false
               } else {
                 alert("요청을 처리하지 못했습니다: 인터넷 연결상태를 확인해보세요");
                 document.getElementById("chart").disabled = false
