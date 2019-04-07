@@ -56,10 +56,6 @@
         }
       </style>
       <script>
-        $(".close").click(function(){
-          $("#notify").alert("close");
-        });
-
         let temp
         let chartCycle
         console.info("Copyright (c) 2019. PMH Studio (with kimyui76). MIT Licensed.")
@@ -70,6 +66,11 @@
             getChart()
           }
         }, 1000)
+
+        
+        $(".close").click(function(){
+          $("#notify").alert("close");
+        });
 
         function getChart () {
           chartCycle = true
