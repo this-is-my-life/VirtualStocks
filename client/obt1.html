@@ -31,6 +31,7 @@
           <button class="btn btn-primary" id="buy" onclick="getBuy()"><i class="fas fa-handshake"></i></button>
           <button class="btn btn-primary" id="sell" onclick="getSell()"><i class="fas fa-hand-holding-usd"></i></button>
           <button class="btn btn-primary" id="bank" onclick="getBank()"><i class="fas fa-money-check-alt"></i></button>
+          <button class="btn btn-warning" id="error"><i class="fas fa-exclamation-triangle"></i></button>
           <!-- <button class="btn btn-primary right-margin" id="casino" onclick="getCasino()">도박</button> -->
         </nav>
       </div>
@@ -53,6 +54,10 @@
 
         .top-margin {
           margin-top: 5px;
+        }
+
+        #error {
+          display: none;
         }
       </style>
       <script>
@@ -80,6 +85,7 @@
           document.getElementById("buy").classList.replace("btn-light", "btn-primary")
           document.getElementById("sell").classList.replace("btn-light", "btn-primary")
           document.getElementById("bank").classList.replace("btn-light", "btn-primary")
+          document.getElementById("error").style.display = "none"
           // document.getElementById("casino").classList.replace("btn-light", "btn-primary")
           temp = "<table class=\"table top-margin\"><thead><th scope=\"col\">종목명</th><th scope=\"col\">전가격 대비</th><th scope=\"col\">현재가격</th><th scope=\"col\">남은 주</th></tr></thead><tbody>"
           // get JSON with using pure javascript
@@ -127,7 +133,7 @@
                 document.getElementById("title").innerHTML = "<h2>" + info.session + "시즌 " + (now.getMonth() + 1) + "/" + now.getDate() + " 주식시장</h2>"
                 document.getElementById("chart").disabled = false
               } else {
-                alert("요청을 처리하지 못했습니다: 인터넷 연결상태를 확인해보세요");
+                getError(502)
                 document.getElementById("chart").disabled = false
               }
             }
@@ -142,6 +148,7 @@
           document.getElementById("buy").classList.replace("btn-light", "btn-primary")
           document.getElementById("sell").classList.replace("btn-light", "btn-primary")
           document.getElementById("bank").classList.replace("btn-light", "btn-primary")
+          document.getElementById("error").style.display = "none"
           temp = "<table class=\"table top-margin\"><thead><th scope=\"col\">#</th><th scope=\"col\">이름</th><th scope=\"col\">자산</th></tr></thead><tbody>"
           var xhr= new XMLHttpRequest()
           var target= "https://api.jsonbin.io/b/5ca80f45acae34349ddff3fb/latest"
@@ -178,7 +185,7 @@
                 document.getElementById("title").innerHTML = "<h2>전체 순위</h2>"
                 document.getElementById("leaderboard").disabled = false
               } else {
-                alert("요청을 처리하지 못했습니다: 인터넷 연결상태를 확인해보세요");
+                getError(502)
                 document.getElementById("leaderboard").disabled = false
               }
             }
@@ -193,6 +200,7 @@
           document.getElementById("buy").classList.replace("btn-primary", "btn-light")
           document.getElementById("sell").classList.replace("btn-light", "btn-primary")
           document.getElementById("bank").classList.replace("btn-light", "btn-primary")
+          document.getElementById("error").style.display = "none"
           // document.getElementById("casino").classList.replace("btn-light", "btn-primary")
           temp = "<div class=\"form-group\"><label for=\"buyName\">매수자</label><input type=\"text\" class=\"form-control\" id=\"buyName\" placeholder=\"ex) PMH\"></div><div class=\"form-group\"><label for=\"buyPasswd\">매수자 비밀번호</label><input type=\"password\" class=\"form-control\" id=\"buyPasswd\" placeholder=\"비밀번호를 정한적이 없을경우 새로 만듭니다\"></div><div class=\"form-group\">\n<label for=\"buySelect\">매수할 종목명</label>\n<select class=\"form-control\" id=\"buySelect\">"
           var xhr= new XMLHttpRequest()
@@ -212,7 +220,7 @@
                 document.getElementById("title").innerHTML = "<h2>매수증서 작성</h2>"
                 document.getElementById("buy").disabled = false
               } else {
-                alert("요청을 처리하지 못했습니다: 인터넷 연결상태를 확인해보세요");
+                getError(502)
                 document.getElementById("buy").disabled = false
               }
             }
@@ -227,6 +235,7 @@
           document.getElementById("buy").classList.replace("btn-light", "btn-primary")
           document.getElementById("sell").classList.replace("btn-primary", "btn-light")
           document.getElementById("bank").classList.replace("btn-light", "btn-primary")
+          document.getElementById("error").style.display = "none"
           // document.getElementById("casino").classList.replace("btn-light", "btn-primary")
           temp = "<div class=\"form-group\"><label for=\"selName\">매도자</label><input type=\"text\" class=\"form-control\" id=\"selName\" placeholder=\"ex) PMH\"></div><div class=\"form-group\"><label for=\"selPasswd\">매도자 비밀번호</label><input type=\"password\" class=\"form-control\" id=\"selPasswd\" placeholder=\"비밀번호를 정한적이 없을경우 새로 만듭니다\"></div><div class=\"form-group\">\n<label for=\"selSelect\">매도할 종목명</label>\n<select class=\"form-control\" id=\"selSelect\">"
           var xhr= new XMLHttpRequest()
@@ -246,7 +255,7 @@
                 document.getElementById("title").innerHTML = "<h2>매도증서 작성</h2>"
                 document.getElementById("sell").disabled = false
               } else {
-                alert("요청을 처리하지 못했습니다: 인터넷 연결상태를 확인해보세요");
+                getError(502)
                 document.getElementById("sell").disabled = false
               }
             }
@@ -261,6 +270,7 @@
           document.getElementById("buy").classList.replace("btn-light", "btn-primary")
           document.getElementById("sell").classList.replace("btn-light", "btn-primary")
           document.getElementById("bank").classList.replace("btn-primary", "btn-light")
+          document.getElementById("error").style.display = "none"
           // document.getElementById("casino").classList.replace("btn-light", "btn-primary")
           temp = "<div class=\"form-group\"><label for=\"selName\">조회할 이름</label><input type=\"text\" class=\"form-control\" id=\"bankName\" placeholder=\"ex) PMH\"></div><button class=\"btn-primary btn fixed\" id=\"bankbtn\" onclick=\"bank()\">잔고, 가진 주 조회</button><hr /><div id=\"bankWindow\"></div>"
           document.getElementById('mainWindow').innerHTML = temp
@@ -283,7 +293,24 @@
           document.getElementById("casino").disabled = false
         }
         
-        function buyReset () {
+        function getError (reason) {
+          chartCycle = false
+          document.getElementById("chart").classList.replace("btn-light", "btn-primary")
+          document.getElementById("leaderboard").classList.replace("btn-light", "btn-primary")
+          document.getElementById("buy").classList.replace("btn-light", "btn-primary")
+          document.getElementById("sell").classList.replace("btn-light", "btn-primary")
+          document.getElementById("bank").classList.replace("btn-light", "btn-primary")
+          document.getElementById("error").style.display = "unset"
+          if (reason === 502) {
+            temp = "<p class=\"text-center\">" + reason + ": 주식정보 혹은 사용자 정보를 가진 서버가 응답하지 않습니다<br />인터넷이 안정적으로 연결되어있는지 확인하시고, 하단의 메뉴를 눌러주세요</p>"  
+          } else {
+            temp = "<p class=\"text-center\">" + reason + ": 알수없는 오류가 발생하였습니다<br />pmhstudio.pmh@gmail.com에 문의하여 주시면 해결해 드리도록 하겠습니다</p>"
+          }
+          document.getElementById('mainWindow').innerHTML = temp
+          document.getElementById("title").innerHTML = "<h2>오류가 발생하였습니다!</h2>"
+        }
+
+        function buyReset () {  
           document.getElementById("buyName").value = ""
           document.getElementById("buyPasswd").value = ""
           document.getElementById("buySelect").value = 0
@@ -309,7 +336,7 @@
                 let chart = JSON.parse(xhr.responseText)
                 document.getElementById("buybtn").innerHTML = "매수 진행 <i class=\"fas fa-caret-right\"></i> (-" + (document.getElementById("buyCount").value * chart.chart[document.getElementById("buySelect").value].after) + ")"
               } else {
-                alert("요청을 처리하지 못했습니다: 인터넷 연결상태를 확인해보세요");
+                getError(502)
               }
             }
           }
@@ -327,7 +354,7 @@
                 let chart = JSON.parse(xhr.responseText)
                 document.getElementById("sellbtn").innerHTML = "<i class=\"fas fa-caret-right\"></i>매도 진행 (+" + (document.getElementById("selCount").value * chart.chart[document.getElementById("selSelect").value].after) + ")"
               } else {
-                alert("요청을 처리하지 못했습니다: 인터넷 연결상태를 확인해보세요");
+                getError(502)
               }
             }
           }
@@ -391,13 +418,13 @@
                         }
                       }
                     } else {
-                      alert("요청을 처리하지 못했습니다: 인터넷 연결상태를 확인해보세요");
+                      getError(502)
                       document.getElementById("buybtn").disabled = false
                     }
                   }
                 }
               } else {
-                alert("요청을 처리하지 못했습니다: 인터넷 연결상태를 확인해보세요");
+                getError(502)
                 document.getElementById("buybtn").disabled = false
               }
             }
@@ -457,13 +484,13 @@
                         }
                       }
                     } else {
-                      alert("요청을 처리하지 못했습니다: 인터넷 연결상태를 확인해보세요");
+                      getError(502)
                       document.getElementById("sellbtn").disabled = false
                     }
                   }
                 }
               } else {
-                alert("요청을 처리하지 못했습니다: 인터넷 연결상태를 확인해보세요");
+                getError(502)
                 document.getElementById("sellbtn").disabled = false
               }
             }
@@ -488,7 +515,7 @@
                 document.getElementById('bankWindow').innerHTML = temp
                 document.getElementById("bankbtn").disabled = false 
               } else {
-                alert("요청을 처리하지 못했습니다: 인터넷 연결상태를 확인해보세요");
+                getError(502)
                 document.getElementById("bankbtn").disabled = false
               }
             }
