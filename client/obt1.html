@@ -87,7 +87,7 @@
           document.getElementById("bank").classList.replace("btn-light", "btn-primary")
           document.getElementById("error").style.display = "none"
           // document.getElementById("casino").classList.replace("btn-light", "btn-primary")
-          temp = "<table class=\"table top-margin\"><thead><th scope=\"col\">종목명</th><th scope=\"col\">전가격 대비</th><th scope=\"col\">현재가격</th><th scope=\"col\">남은 주</th></tr></thead><tbody>"
+          temp = "<table class=\"table top-margin\"><thead><th scope=\"col\">종목명</th><th scope=\"col\">전가격 대비</th><th scope=\"col\">현재가격</th>><th scope=\"col\">이전가격</th><th scope=\"col\">남은 주</th></tr></thead><tbody>"
           // get JSON with using pure javascript
           var xhr= new XMLHttpRequest()
           var target= "https://api.jsonbin.io/b/5ca80c270f4c9334823b59dc/latest"
@@ -119,6 +119,7 @@
                     temp += "<td> - " + 0 + "</td>"
                   }
                   temp += "<td>" + chart[counter].after + "</td>"
+                  temp += "<td>" + chart[counter].before + "</td>"
                   temp += "<td>" + chart[counter].count + "주</td></tr>"
                 }
                 let last = new Date(info.lastUpdate)
