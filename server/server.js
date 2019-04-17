@@ -1,6 +1,6 @@
 const superagent = require('superagent')
 let obt1HackBlock
-superagent.get('https://api.jsonbin.io/b/5ca80c270f4c9334823b59dc/latest').then((response) => {
+superagent.get('https://api.myjson.com/bins/14hj1k').then((response) => {
   obt1HackBlock = response
 
   cbtServer()
@@ -96,12 +96,12 @@ function obt1Server () {
     }
   }
   console.log(obt1HackBlock.body)
-  superagent.put('https://api.jsonbin.io/b/5ca80c270f4c9334823b59dc').send(obt1HackBlock.body).catch((err) => { console.log(err) })
+  superagent.put('https://api.myjson.com/bins/14hj1k').send(obt1HackBlock.body).catch((err) => { console.log(err) })
 }
 
 function cbtServer () {
   
-  superagent.get('https://api.jsonbin.io/b/5c9cd7b9da12e364adfb7737/latest').then((response) => {
+  superagent.get('https://api.myjson.com/bins/10hky0').then((response) => {
     response.body.info.routine++
     let last = new Date()
     let next = new Date()
@@ -185,7 +185,7 @@ function cbtServer () {
       }
     }
     console.log(response.body)
-    superagent.put('https://api.jsonbin.io/b/5c9cd7b9da12e364adfb7737').send(response.body).catch((err) => { console.log(err) })
+    superagent.put('https://api.myjson.com/bins/10hky0').send(response.body).catch((err) => { console.log(err) })
   })
 }
 

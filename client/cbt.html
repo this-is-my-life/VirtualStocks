@@ -82,7 +82,7 @@
           temp = "<table class=\"table top-margin\"><thead><th scope=\"col\">종목명</th><th scope=\"col\">전가격 대비</th><th scope=\"col\">현재가격</th><th scope=\"col\">남은 주</th></tr></thead><tbody>"
           // get JSON with using pure javascript
           var xhr= new XMLHttpRequest()
-          var target= "https://api.jsonbin.io/b/5c9cd7b9da12e364adfb7737/latest"
+          var target= "https://api.myjson.com/bins/10hky0"
           xhr.open("GET", target)
           xhr.send()
 
@@ -134,7 +134,7 @@
           document.getElementById("bank").classList.replace("btn-light", "btn-primary")
           temp = "<table class=\"table top-margin\"><thead><th scope=\"col\">#</th><th scope=\"col\">이름</th><th scope=\"col\">자산</th></tr></thead><tbody>"
           var xhr= new XMLHttpRequest()
-          var target= "https://api.jsonbin.io/b/5c9ebada1c56bb1ec391d410/latest"
+          var target= "https://api.myjson.com/bins/nbwh4"
           xhr.open("GET", target)
           xhr.send()
 
@@ -186,7 +186,7 @@
           // document.getElementById("casino").classList.replace("btn-light", "btn-primary")
           temp = "<div class=\"form-group\"><label for=\"buyName\">매수자</label><input type=\"text\" class=\"form-control\" id=\"buyName\" placeholder=\"ex) PMH\"></div><div class=\"form-group\"><label for=\"buyPasswd\">매수자 비밀번호</label><input type=\"password\" class=\"form-control\" id=\"buyPasswd\" placeholder=\"비밀번호를 정한적이 없을경우 새로 만듭니다\"></div><div class=\"form-group\">\n<label for=\"buySelect\">매수할 종목명</label>\n<select class=\"form-control\" id=\"buySelect\">"
           var xhr= new XMLHttpRequest()
-          var target= "https://api.jsonbin.io/b/5c9cd7b9da12e364adfb7737/latest"
+          var target= "https://api.myjson.com/bins/10hky0"
           xhr.open("GET", target)
           xhr.send()
 
@@ -220,7 +220,7 @@
           // document.getElementById("casino").classList.replace("btn-light", "btn-primary")
           temp = "<div class=\"form-group\"><label for=\"selName\">매도자</label><input type=\"text\" class=\"form-control\" id=\"selName\" placeholder=\"ex) PMH\"></div><div class=\"form-group\"><label for=\"selPasswd\">매도자 비밀번호</label><input type=\"password\" class=\"form-control\" id=\"selPasswd\" placeholder=\"비밀번호를 정한적이 없을경우 새로 만듭니다\"></div><div class=\"form-group\">\n<label for=\"selSelect\">매도할 종목명</label>\n<select class=\"form-control\" id=\"selSelect\">"
           var xhr= new XMLHttpRequest()
-          var target= "https://api.jsonbin.io/b/5c9cd7b9da12e364adfb7737/latest"
+          var target= "https://api.myjson.com/bins/10hky0"
           xhr.open("GET", target)
           xhr.send()
 
@@ -289,7 +289,7 @@
 
         function caculateBuy () {
           var xhr= new XMLHttpRequest()
-          var target= "https://api.jsonbin.io/b/5c9cd7b9da12e364adfb7737/latest"
+          var target= "https://api.myjson.com/bins/10hky0"
           xhr.open("GET", target)
           xhr.send()
 
@@ -307,7 +307,7 @@
 
         function caculateSel () {
           var xhr= new XMLHttpRequest()
-          var target= "https://api.jsonbin.io/b/5c9cd7b9da12e364adfb7737/latest"
+          var target= "https://api.myjson.com/bins/10hky0"
           xhr.open("GET", target)
           xhr.send()
 
@@ -326,7 +326,7 @@
         function buy () {
           document.getElementById("buybtn").disabled = true
           var xhr= new XMLHttpRequest()
-          var target= "https://api.jsonbin.io/b/5c9cd7b9da12e364adfb7737/latest"
+          var target= "https://api.myjson.com/bins/10hky0"
           xhr.open("GET", target)
           xhr.send()
 
@@ -335,7 +335,7 @@
               if (xhr.status== 200){
                 let chart = JSON.parse(xhr.responseText)
                 var xhr2= new XMLHttpRequest()
-                var target2= "https://api.jsonbin.io/b/5c9ebada1c56bb1ec391d410/latest"
+                var target2= "https://api.myjson.com/bins/nbwh4"
                 xhr2.open("GET", target2)
                 xhr2.send()
 
@@ -369,11 +369,11 @@
                               chart.chart[parseInt(document.getElementById("buySelect").value)].count -= parseInt(document.getElementById("buyCount").value)
                               have[document.getElementById("buyName").value].have[parseInt(document.getElementById("buySelect").value) + 1] += parseInt(document.getElementById("buyCount").value)
                               have[document.getElementById("buyName").value].have[0] -= (document.getElementById("buyCount").value * chart.chart[document.getElementById("buySelect").value].after)
-                              put("https://api.jsonbin.io/b/5c9ebada1c56bb1ec391d410", have)
-                              put("https://api.jsonbin.io/b/5c9cd7b9da12e364adfb7737", chart)
+                              put("https://api.myjson.com/bins/nbwh4", have)
+                              put("https://api.myjson.com/bins/10hky0", chart)
                               getChart()
                               document.getElementById("buybtn").disabled = false
-                            }
+                            }z
                           }
                         } else {
                           document.getElementById("buyPasswd").style.backgroundColor = "lightpink"
@@ -397,7 +397,7 @@
         function sel () {
           document.getElementById("sellbtn").disabled = true
           var xhr= new XMLHttpRequest()
-          var target= "https://api.jsonbin.io/b/5c9cd7b9da12e364adfb7737/latest"
+          var target= "https://api.myjson.com/bins/10hky0"
           xhr.open("GET", target)
           xhr.send()
 
@@ -406,7 +406,7 @@
               if (xhr.status== 200){
                 let chart = JSON.parse(xhr.responseText)
                 var xhr2= new XMLHttpRequest()
-                var target2= "https://api.jsonbin.io/b/5c9ebada1c56bb1ec391d410/latest"
+                var target2= "https://api.myjson.com/bins/nbwh4"
                 xhr2.open("GET", target2)
                 xhr2.send()
 
@@ -436,8 +436,8 @@
                             chart.chart[parseInt(document.getElementById("selSelect").value)].count += parseInt(document.getElementById("selCount").value)
                             have[document.getElementById("selName").value].have[parseInt(document.getElementById("selSelect").value) + 1] -= parseInt(document.getElementById("selCount").value)
                             have[document.getElementById("selName").value].have[0] += (document.getElementById("selCount").value * chart.chart[document.getElementById("selSelect").value].after)
-                            put("https://api.jsonbin.io/b/5c9ebada1c56bb1ec391d410", have)
-                            put("https://api.jsonbin.io/b/5c9cd7b9da12e364adfb7737", chart)
+                            put("https://api.myjson.com/bins/nbwh4", have)
+                            put("https://api.myjson.com/bins/10hky0", chart)
                             getChart()
                             document.getElementById("sellbtn").disabled = false
                           }
@@ -463,7 +463,7 @@
         function bank () {
           document.getElementById("bankbtn").disabled = true
           var xhr= new XMLHttpRequest()
-          var target= "https://api.jsonbin.io/b/5c9ebada1c56bb1ec391d410/latest"
+          var target= "https://api.myjson.com/bins/nbwh4"
           xhr.open("GET", target)
           xhr.send()
 
